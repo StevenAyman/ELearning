@@ -31,9 +31,15 @@ public class Result
 
 public class Result<TValue> : Result
 {
-    private readonly TValue? _value;
-    public TValue Value =>
-        IsSuccuss ? _value : throw new InvalidOperationException("Cannot access value of failed result");
+    private TValue? _value;
+
+    public TValue V
+    {
+        get => IsSuccuss ? _value : throw new InvalidOperationException("Cannot access value of failed result");
+        private set => _value = value;
+    }
+    //public TValue Value =>
+    //    IsSuccuss ? _value : throw new InvalidOperationException("Cannot access value of failed result");
 
     private Result(TValue value) : base(true, Error.None)
     {
