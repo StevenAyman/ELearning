@@ -31,16 +31,12 @@ public class Result
 
 public class Result<TValue> : Result
 {
-    private TValue? _value;
+    #pragma warning disable IDE0032
+    private readonly TValue? _value;
 
-    public TValue V
-    {
-        get => IsSuccuss ? _value : throw new InvalidOperationException("Cannot access value of failed result");
-        private set => _value = value;
-    }
-    //public TValue Value =>
-    //    IsSuccuss ? _value : throw new InvalidOperationException("Cannot access value of failed result");
-
+    public TValue Value =>
+        IsSuccuss ? _value : throw new InvalidOperationException("Cannot access value of failed result");
+    #pragma warning restore IDE0032
     private Result(TValue value) : base(true, Error.None)
     {
         _value = value;
