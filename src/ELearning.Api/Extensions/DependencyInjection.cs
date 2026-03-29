@@ -2,6 +2,7 @@
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Serilog;
 
 namespace ELearning.Api.Extensions;
 
@@ -12,7 +13,9 @@ public static class DependencyInjection
         app.Services.AddControllers();
         app.Services.AddOpenApi();
 
+
         app.AddOpenTelemtery();
+        app.AddSerilog();
         return app;
     }
 
@@ -35,6 +38,18 @@ public static class DependencyInjection
             options.IncludeScopes = true;
         });
 
+
+        return app;
+    }
+
+    public static WebApplicationBuilder AddSerilog(this WebApplicationBuilder app)
+    {
+        app.Host.UseSerilog((context, services, configuration) =>
+        {
+            configuration
+            .ReadFrom.Configuration(context.Configuration)
+            .ReadFrom.Services(services);
+        }, writeToProviders: true);
 
         return app;
     }
