@@ -8,7 +8,7 @@ using ELearning.Domain.Shared;
 namespace ELearning.Domain.Students;
 public sealed class Student : BaseEntity
 {
-    private Student() : base() { }
+    private Student() { }
 
     public Student(string id) : base(id)
     {

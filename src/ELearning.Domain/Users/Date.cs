@@ -14,7 +14,7 @@ public sealed record Date
         Value = value;
     }
 
-    public Date Create(DateOnly date)
+    public static Date Create(DateOnly date)
     {
         if (date > DateOnly.FromDateTime(DateTime.UtcNow.Date))
         {
