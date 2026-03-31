@@ -21,7 +21,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5.2.0
         with:
-          dotnet-version: ${{ env.DOTENET_VERSION }}
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Install dependencies
         run: dotnet restore ELearning.sln
