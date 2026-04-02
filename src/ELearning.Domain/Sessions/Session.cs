@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using ELearning.Domain.Sessions.Events;
 using ELearning.Domain.Shared;
-using ELearning.Domain.Students;
 
 namespace ELearning.Domain.Sessions;
 public sealed class Session : BaseEntity
@@ -21,7 +20,8 @@ public sealed class Session : BaseEntity
         Money price,
         SessionStatus status,
         DateTime createdOnUtc,
-        string instructorId) : base(id)
+        string instructorId,
+        string subjectId) : base(id)
     {
         Title = title;
         Description = description;
@@ -29,16 +29,18 @@ public sealed class Session : BaseEntity
         Status = status;
         CreatedOnUtc = createdOnUtc;
         InstructorId = instructorId;
+        SubjectId = subjectId;
     }
 
     public Title Title { get; private set; }
-    public Description Description { get; private set; }
+    public Description? Description { get; private set; }
     public Money Price { get; private set; }
     public string InstructorId { get; private set; }
+    public string SubjectId { get; private set; }
     public SessionStatus Status { get; private set; }
     public DateTime CreatedOnUtc { get; private set; }
-    public DateTime PublishedOnUtc { get; private set; }
-    public DateTime LastUpdatedOnUtc { get; private set; }
+    public DateTime? PublishedOnUtc { get; private set; }
+    public DateTime? LastUpdatedOnUtc { get; private set; }
 
     public void AddVideo(string id, Title title, string url, VideoOrder order, DateTime utcNow)
     {
@@ -70,6 +72,17 @@ public sealed class Session : BaseEntity
         PublishedOnUtc = publishedOnUtc;
         RaiseDomainEvent(new SessionPublishedDomainEvent(Id));
 
+    }
+
+    public void Unpublish()
+    {
+        if (Status != SessionStatus.Publish)
+        {
+            throw new ApplicationException("Session is already unpublished");
+        }
+
+        Status = SessionStatus.Draft;
+        PublishedOnUtc = default;
     }
 
     public void UpdatePrice(Money price, DateTime utcNow)

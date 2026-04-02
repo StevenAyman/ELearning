@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ELearning.Domain.Sessions;
-using ELearning.Domain.Students;
+using ELearning.Domain.Shared;
 
 namespace ELearning.Domain.Instructors;
 public class SessionDomainService
 {
-    public Session CreateSession(string id, Title title, Description description, Money price, DateTime createdOnUtc, string instructorId)
+    public Session CreateSession(string id, Title title, Description description, Money price, DateTime createdOnUtc, string instructorId, string sessionId)
     {
-        return new Session(id, title, description, price, SessionStatus.Draft, createdOnUtc, instructorId);
+        return new Session(id, title, description, price, SessionStatus.Draft, createdOnUtc, instructorId, sessionId);
     }
 }

@@ -40,4 +40,53 @@ public sealed class User : BaseEntity
         user.RaiseDomainEvent(new UserRegisteredDomainEvent(user.Id));
         return user;
     }
+
+    public User UpdateDateOfBirth(Date newDateOfBirth)
+    {
+        DateOfBirth = newDateOfBirth;
+        return this;
+    }
+    public User UpdateFirstName(FirstName firstName)
+    {
+        if (string.IsNullOrWhiteSpace(firstName.Value))
+        {
+            throw new ApplicationException("First name can't be null or empty");
+        }
+        FirstName = firstName;
+        return this;
+    }
+    public User UpdateLastName(LastName lastName)
+    {
+        if (string.IsNullOrWhiteSpace(lastName.Value))
+        {
+            throw new ApplicationException("Last name can't be null or empty");
+        }
+
+        LastName = lastName;
+
+        return this;
+
+    }
+    public User UpdateEmail(Email email)
+    {
+        if (string.IsNullOrWhiteSpace(email.Value))
+        {
+            throw new ApplicationException("Invalid email");
+        }
+
+        Email = email;
+        return this;
+    }
+
+    public User UpdateCity(string city)
+    {
+        if (string.IsNullOrWhiteSpace(city))
+        {
+            throw new ApplicationException("City can't be null or empty");
+        }
+
+        City = city;
+
+        return this;
+    }
 }

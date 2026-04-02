@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ELearning.Domain.Sessions;
 using ELearning.Domain.Sessions.Events;
-using ELearning.Domain.Students;
+using ELearning.Domain.Shared;
 using FluentAssertions;
 
 namespace ELearning.Domain.Tests.Unit.Sessions;
@@ -21,7 +21,8 @@ public sealed class SessionTests
             new Money(50),
             SessionStatus.Draft,
             DateTime.UtcNow,
-            $"i_{Guid.CreateVersion7()}");
+            $"i_{Guid.CreateVersion7()}",
+            $"s_{Guid.CreateVersion7()}");
     }
 
     [Fact]
@@ -204,5 +205,35 @@ public sealed class SessionTests
         // Assert
         result.Should().Throw<ApplicationException>()
             .WithMessage("The session doesn't contain any videos");
+    }
+
+    [Fact]
+    public void Unpublish_ShouldChangeTheStateOfSessionToDraft_WhenSessionIsPublished()
+    {
+        // Arrange
+        var utcNow = DateTime.UtcNow;
+        var id = $"v_{Guid.CreateVersion7()}";
+        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow);
+        _sut.Publish(utcNow);
+
+        // Act
+        _sut.Unpublish();
+
+        // Assert
+        _sut.Status.Should().Be(SessionStatus.Draft);
+        _sut.PublishedOnUtc.Should().Be(null);
+    }
+
+    [Fact]
+    public void Unpublish_ShouldThrowException_WhenSessionIsInDraftState()
+    {
+        // Arrange
+
+        // Act
+        Action result = () => _sut.Unpublish();
+
+        // Assert
+        result.Should().Throw<ApplicationException>()
+            .WithMessage("Session is already unpublished");
     }
 }
