@@ -12,17 +12,20 @@ public sealed class Instructor : BaseEntity
     public Instructor(
         string id,
         Bio bio,
-        Rating rating) : base(id)
+        Rating rating,
+        string subjectId) : base(id)
     {
         Bio = bio;
         Rating = rating;
+        SubjectId = subjectId;
     }
     public Bio Bio { get; private set; }
-    public Rating Rating { get; private set; }
+    public Rating? Rating { get; private set; }
+    public string SubjectId { get; private set; }
 
     public void UpdateBio(Bio bio)
     {
-        if (bio is not null && !string.IsNullOrWhiteSpace(bio.Value))
+        if (!string.IsNullOrWhiteSpace(bio.Value))
         {
             Bio = bio;
             return;

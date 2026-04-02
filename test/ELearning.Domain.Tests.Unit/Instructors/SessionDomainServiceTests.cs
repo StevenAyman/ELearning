@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ELearning.Domain.Instructors;
 using ELearning.Domain.Sessions;
+using ELearning.Domain.Shared;
 using ELearning.Domain.Students;
 using FluentAssertions;
 
@@ -26,10 +27,11 @@ public sealed class SessionDomainServiceTests
         var price = new Money(60);
         var createdOnUtc = DateTime.UtcNow;
         var instructorId = $"I_{Guid.CreateVersion7()}";
-        var session = new Session(id, title, description, price, SessionStatus.Draft, createdOnUtc, instructorId);
+        var sessionId = $"s_{Guid.CreateVersion7()}";
+        var session = new Session(id, title, description, price, SessionStatus.Draft, createdOnUtc, instructorId, sessionId);
 
         // Act
-        var result = _sut.CreateSession(id, title, description, price, createdOnUtc, instructorId);
+        var result = _sut.CreateSession(id, title, description, price, createdOnUtc, instructorId, sessionId);
 
         // Assert
         result.Should().NotBeNull();

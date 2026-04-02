@@ -9,7 +9,7 @@ public class Result
 {
     protected Result(bool isSuccuss, Error error)
     {
-        if (isSuccuss && error != null ||
+        if (isSuccuss && error != Error.None ||
             !isSuccuss && error == Error.None)
         {
             throw new ArgumentException("Invalid arguments");
