@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ELearning.Domain.Ratings;
 using ELearning.Domain.Sessions.Events;
 using ELearning.Domain.Shared;
 
@@ -38,6 +39,7 @@ public sealed class Session : BaseEntity
     public string InstructorId { get; private set; }
     public string SubjectId { get; private set; }
     public SessionStatus Status { get; private set; }
+    public RatingSummary Rating { get; private set; } = new RatingSummary(0, 0);
     public DateTime CreatedOnUtc { get; private set; }
     public DateTime? PublishedOnUtc { get; private set; }
     public DateTime? LastUpdatedOnUtc { get; private set; }
@@ -121,4 +123,38 @@ public sealed class Session : BaseEntity
         LastUpdatedOnUtc = utcNow;
     }
 
+    public void AddRating(Rating rating)
+    {
+        Rating = Rating.Add(rating);
+    }
+
+    public void RemoveRating(Rating studentRating)
+    {
+        if (Rating.Count == 0)
+        {
+            throw new ApplicationException("Invalid operation. Can't remove rating not exist");
+        }
+
+        var newCount = Rating.Count - 1;
+        var newTotal = (int)(Rating.Average.Value * Rating.Count - studentRating.Value);
+
+        Rating = newCount == 0 ? new RatingSummary(0, 0) : new RatingSummary(newCount, newTotal);
+    }
+
+    public void UpdateRating(Rating oldRating, Rating newRating)
+    {
+        if (Rating.Count == 0)
+        {
+            throw new ApplicationException("Invalid operation. Can't update rating not exist");
+        }
+
+        if (oldRating.Value == newRating.Value)
+        {
+            throw new ApplicationException("Error the new value is equal to the old one");
+        }
+
+        var newTotal = (int)(Rating.Average.Value * Rating.Count - oldRating.Value + newRating.Value);
+
+        Rating = new RatingSummary(Rating.Count, newTotal);
+    }
 }
