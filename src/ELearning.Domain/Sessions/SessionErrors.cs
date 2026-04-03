@@ -11,4 +11,5 @@ public static class SessionErrors
     public static readonly Error EmptySession = new(
         "Session.NoVideos",
         "Failed to publish this session, session should contain at least one video.");
+
 }
