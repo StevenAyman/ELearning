@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ELearning.Domain.Sessions;
+using ELearning.Domain.Shared;
 using FluentAssertions;
 
 namespace ELearning.Domain.Tests.Unit.Sessions;
@@ -13,7 +14,8 @@ public sealed class VideoTests
 
     public VideoTests()
     {
-        _sut = new($"v_{Guid.CreateVersion7()}", new Title("Video 01"), "valid url", VideoOrder.Create(1));
+        _sut = new($"v_{Guid.CreateVersion7()}", new Title("Video 01"), "valid url", VideoOrder.Create(1), 222, 
+            Percentage.Create(95), false, false);
     }
 
     [Fact]
