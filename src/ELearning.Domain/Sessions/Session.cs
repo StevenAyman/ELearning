@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ELearning.Domain.Exams;
 using ELearning.Domain.Ratings;
 using ELearning.Domain.Sessions.Events;
 using ELearning.Domain.Shared;
@@ -43,10 +44,23 @@ public sealed class Session : BaseEntity
     public DateTime CreatedOnUtc { get; private set; }
     public DateTime? PublishedOnUtc { get; private set; }
     public DateTime? LastUpdatedOnUtc { get; private set; }
+    public bool HasQuiz { get; private set; }
+    public SessionQuiz? Quiz { get; private set; }
 
-    public void AddVideo(string id, Title title, string url, VideoOrder order, DateTime utcNow)
+    public void AddVideo(
+        string id, 
+        Title title, 
+        string url, 
+        VideoOrder order, 
+        DateTime utcNow, 
+        int durationInSeconds, 
+        Percentage thresholdPercentage, 
+        bool isInProgression, 
+        bool hasPrerequisite,
+        string? prerequisiteId = null, 
+        int maxViewCount = 3)
     {
-        var video = new Video(id, title, url, order);
+        var video = new Video(id, title, url, order, durationInSeconds, thresholdPercentage, isInProgression, hasPrerequisite, prerequisiteId, maxViewCount);
         _videos.Add(video);
         video.RaiseDomainEvent(new VideoAddedDomainEvent(video.Id));
         LastUpdatedOnUtc = utcNow;
@@ -156,5 +170,84 @@ public sealed class Session : BaseEntity
         var newTotal = (int)(Rating.Average.Value * Rating.Count - oldRating.Value + newRating.Value);
 
         Rating = new RatingSummary(Rating.Count, newTotal);
+    }
+
+    public SessionQuiz CreateMcqQuiz(
+        string id,
+        string instructorId,
+        string subjectId,
+        Title title,
+        Percentage passingPercentage,
+        IEnumerable<ExamQuestion> questions, 
+        int totalGrades, 
+        int questionsNumber,
+        int durationInSeconds,
+        DateTime createdAt,
+        int maximumTries = 3)
+    {
+        if (Status != SessionStatus.Draft)
+        {
+            throw new ApplicationException("Can't create quiz for published session");
+        }
+        if (HasQuiz)
+        {
+            throw new ApplicationException("You can't create another quiz for same session");
+        }
+
+        var isAllMcq = questions.All(q => q.Type == ExamQuestionType.Mcq);
+
+        if (!isAllMcq)
+        {
+            throw new ApplicationException("Invalid question type. Quiz contains only MCQ questions");
+        }
+
+        var quiz = SessionQuiz.Create(id, 
+            instructorId, 
+            subjectId, 
+            title,
+            durationInSeconds, 
+            totalGrades, 
+            questionsNumber, passingPercentage, maximumTries, createdAt, questions);
+
+        HasQuiz = true;
+        Quiz = quiz;
+        return quiz;
+    }
+
+    public void RemoveQuiz(DateTime utcNow)
+    {
+        if (!HasQuiz)
+        {
+            throw new ApplicationException("There's no quiz to be removed");
+        }
+
+        if (Status != SessionStatus.Draft || PublishedOnUtc.HasValue)
+        {
+            throw new ApplicationException("Can't remove quiz of published session");
+        }
+
+        HasQuiz = false;
+        Quiz = null;
+        LastUpdatedOnUtc = utcNow;
+    }
+
+    public void HideQuizFromSession()
+    {
+        if (Quiz is null)
+        {
+            throw new ApplicationException("There's no quiz hide");
+        }
+
+        Quiz.HideQuiz();
+    }
+
+    public void PublishQuizToSession()
+    {
+        if (Quiz is null)
+        {
+            throw new ApplicationException("There's no quiz to publish");
+        }
+
+        Quiz.PublishQuiz();
     }
 }

@@ -34,10 +34,17 @@ public sealed class SessionTests
         var video = new Video(id,
             new Title("Video 01"), 
             "url", 
-            VideoOrder.Create(1));
+            VideoOrder.Create(1),
+            2222,
+            Percentage.Create(95),
+            false,
+            false, null, 3);
 
         // Act
-        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow);
+        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow, 2222,
+            Percentage.Create(95),
+            false,
+            false);
 
         // Assert
         _sut.Videos.Should().HaveCount(1);
@@ -54,10 +61,14 @@ public sealed class SessionTests
         var video = new Video(id,
             new Title("Video 01"),
             "url",
-            VideoOrder.Create(1));
+            VideoOrder.Create(1),
+            2222,
+            Percentage.Create(95),
+            false,
+            false, null, 3);
 
         // Act
-        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow);
+        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow, 2222, Percentage.Create(95), false, false);
 
         // Assert
         _sut.Videos.Should().ContainEquivalentOf(video, options => options.Excluding(os => os.DomainEvents));
@@ -72,7 +83,7 @@ public sealed class SessionTests
         // Arrange
         var utcNow = DateTime.UtcNow;
         var id = $"v_{Guid.CreateVersion7()}";
-        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow);
+        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow, 2222, Percentage.Create(95), false, false);
 
         // Act
         Action result = () => _sut.RemoveVideo(id);
@@ -168,7 +179,7 @@ public sealed class SessionTests
         // Arrange
         var utcNow = DateTime.UtcNow;
         var id = $"v_{Guid.CreateVersion7()}";
-        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow);
+        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow, 2222, Percentage.Create(95), false, false);
 
         // Act
         _sut.Publish(utcNow);
@@ -184,7 +195,7 @@ public sealed class SessionTests
         // Arrange
         var utcNow = DateTime.UtcNow;
         var id = $"v_{Guid.CreateVersion7()}";
-        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow);
+        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow, 2222, Percentage.Create(95), false, false);
 
         // Act
         _sut.Publish(utcNow);
@@ -213,7 +224,7 @@ public sealed class SessionTests
         // Arrange
         var utcNow = DateTime.UtcNow;
         var id = $"v_{Guid.CreateVersion7()}";
-        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow);
+        _sut.AddVideo(id, new Title("Video 01"), "url", VideoOrder.Create(1), utcNow, 2222, Percentage.Create(95), false, false);
         _sut.Publish(utcNow);
 
         // Act
