@@ -15,17 +15,20 @@ public sealed class Purchase : BaseEntity
     public Purchase(
         string id,
         string studentId,
-        string sessionId,
-        DateTime utcNow) : base(id)
+        DateTime utcNow,
+        string? sessionId = null,
+        string? examId = null) : base(id)
     {  
         StudentId = studentId;
         SessionId = sessionId;
+        ExamId = examId;
         CreatedAtUtc = utcNow;
         Status = PaymentStatus.Pending;
     }
 
     public string StudentId { get; private set; }
-    public string SessionId { get; private set; }
+    public string? SessionId { get; private set; }
+    public string? ExamId { get; private set; }
     public PurchaseMethod? PaymentMethod { get; private set; }
     public Money TotalPaid { get; private set; }
     public string? CodeId { get; private set; } // Discount Code if available
@@ -85,5 +88,15 @@ public sealed class Purchase : BaseEntity
 
         TotalPaid = paidAmount;
         PaymentMethod = purchaseMethod;
+    }
+
+    public static Purchase CreateSessionPurchase(string id, string studentId, string sessionId, DateTime utcNow)
+    {
+        return new Purchase(id, studentId, utcNow, sessionId);
+    }
+
+    public static Purchase CreateExamPurchase(string id, string studentId, string examId, DateTime utcNow)
+    {
+        return new Purchase(id, studentId, utcNow, null, examId);
     }
 }

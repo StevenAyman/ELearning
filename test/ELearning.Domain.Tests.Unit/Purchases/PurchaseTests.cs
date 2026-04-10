@@ -16,7 +16,7 @@ public sealed class PurchaseTests
 
     public PurchaseTests()
     {
-        _sut = new Purchase("id", "12", "123", DateTime.UtcNow);
+        _sut = Purchase.CreateSessionPurchase("id", "12", "123", DateTime.UtcNow);
     }
 
     [Fact]
