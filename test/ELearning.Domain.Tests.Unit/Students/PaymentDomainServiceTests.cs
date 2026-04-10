@@ -37,7 +37,7 @@ public sealed class PaymentDomainServiceTests
             "");
         var purchasedSessions = new List<Purchase>();
         var utcNow = DateTime.UtcNow;
-        var expected = new Purchase(id, "", "", utcNow);
+        var expected = Purchase.CreateSessionPurchase(id, "", "", utcNow);
 
         // Act
         var result = _sut.CreateSessionPayment(id, student, session, purchasedSessions, utcNow);
@@ -133,7 +133,7 @@ public sealed class PaymentDomainServiceTests
         "",
         "");
         var utcNow = DateTime.UtcNow;
-        var studentPurchases = new List<Purchase>() { new Purchase("", "", "1", utcNow) };
+        var studentPurchases = new List<Purchase>() { Purchase.CreateSessionPurchase("", "", "1", utcNow) };
 
         // Act
         Action result = () => _sut.CreateSessionPayment(id, student, session, studentPurchases, utcNow);

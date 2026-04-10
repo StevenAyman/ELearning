@@ -41,7 +41,7 @@ public sealed class PaymentDomainService
             throw new ApplicationException("Session already purchased");
         }
 
-        var purchase = new Purchase(id, student.Id, session.Id, utcNow);
+        var purchase = Purchase.CreateSessionPurchase(id, student.Id, session.Id, utcNow);
         purchase.RaiseDomainEvent(new PurchaseCreatedDomainEvent(purchase.Id));
 
         return purchase;

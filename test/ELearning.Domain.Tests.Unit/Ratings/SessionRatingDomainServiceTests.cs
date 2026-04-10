@@ -53,7 +53,7 @@ public sealed class SessionRatingDomainServiceTests
         var rating = Rating.CreateRating(5);
         var utc = DateTime.UtcNow;
         _purchaseRepo.GetWithSpecAsync(Arg.Any<BaseSpecifications<Purchase>>(), token)
-                .Returns(new Purchase("33", "2", "1", utc));
+                .Returns(Purchase.CreateSessionPurchase("33", "2", "1", utc));
         var sessionRatings = SessionsRating.CreateNewRating(sessionId, studentId, rating, utc);
 
         // Act
@@ -76,7 +76,7 @@ public sealed class SessionRatingDomainServiceTests
         var rating = Rating.CreateRating(5);
         var utc = DateTime.UtcNow;
         _purchaseRepo.GetWithSpecAsync(Arg.Any<BaseSpecifications<Purchase>>(), token)
-                .Returns(new Purchase("33", "2", "1", utc));
+                .Returns(Purchase.CreateSessionPurchase("33", "2", "1", utc));
 
         // Act
         var result = await _sut.RateSession(sessionId, studentId, rating, utc, token);
