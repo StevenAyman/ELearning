@@ -18,3 +18,19 @@ services:
     ports:
       - 18888:18888
 
+  elearning.sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql_server_db
+    ports:
+     - 1433:1433
+    environment:
+     - ACCEPT_EULA=Y
+     - MSSQL_SA_PASSWORD=P@ssw0rd
+     - MSSQL_PID=Developer
+    volumes:
+     - mssql_data:/var/opt/mssql
+    restart: always
+
+volumes:
+  mssql_data:
+

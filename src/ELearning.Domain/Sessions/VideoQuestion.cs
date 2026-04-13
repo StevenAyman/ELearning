@@ -28,6 +28,7 @@ public sealed class VideoQuestion : BaseEntity
     public string SessionId { get; private set; }
     public string Question { get; private set; }
     public string? Answer { get; private set; }
+    public string? AssistantId { get; private set; }
     public QuestionStatus Status { get; private set; }
     public int Vote { get; private set; }
 
@@ -41,7 +42,7 @@ public sealed class VideoQuestion : BaseEntity
         Status = QuestionStatus.Deleted;
     }
 
-    public void AnswerQuestion(string answer)
+    public void AnswerQuestion(string answer, string assistantId)
     {
         if (Status == QuestionStatus.Answered)
         {
@@ -52,8 +53,13 @@ public sealed class VideoQuestion : BaseEntity
         {
             throw new ApplicationException("Answer can't be null or empty");
         }
+        if (string.IsNullOrWhiteSpace(assistantId))
+        {
+            throw new ApplicationException("Invalid assistant id");
+        }
         Answer = answer;
         Status = QuestionStatus.Answered;
+        AssistantId = assistantId;
     }
 
     public void MarkQuestionAsClosed()

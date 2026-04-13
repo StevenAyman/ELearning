@@ -2,6 +2,15 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Dapper" />
+    <PackageReference Include="EFCore.NamingConventions" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+
+  <ItemGroup>
     <ProjectReference Include="..\ELearning.Application\ELearning.Application.csproj" />
   </ItemGroup>
 

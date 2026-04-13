@@ -9,7 +9,6 @@ public sealed class ExamMcqQuestionAnswer
         Answer = answer;
     }
 
-    public int Id { get; private set; }
     public int AnswerId { get; private set; }
     public string Answer { get; private set; }
 

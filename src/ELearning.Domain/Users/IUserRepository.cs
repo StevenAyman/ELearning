@@ -9,9 +9,10 @@ using ELearning.Domain.Shared;
 namespace ELearning.Domain.Users;
 public interface IUserRepository<TEntity> where TEntity : BaseEntity
 {
-    Task<TEntity> GetById(string id);
-    Task<IEnumerable<TEntity>> GetAll();
-    void Add(TEntity instructor);
-    void Update(TEntity instructor);
-    void Delete(string id);
+    Task<TEntity?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<(TEntity entity, User user)?> GetUserWithProfileAsync(string id, CancellationToken cancellationToken = default);
+    void Add(TEntity entity);
+    void Update(TEntity entity);
+    void Delete(TEntity entity);
 }

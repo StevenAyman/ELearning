@@ -110,7 +110,7 @@ public class UserQuizDomainService()
         double sumScore = 0;
         foreach (var studentAnswer in studentAnswers)
         {
-            var question = quizQuestions.FirstOrDefault(q => q.Id == studentAnswer.Id);
+            var question = quizQuestions.FirstOrDefault(q => q.Id == studentAnswer.QuestionId);
             if (question is null ||
                 question.CorrectAnswer is null)
             {

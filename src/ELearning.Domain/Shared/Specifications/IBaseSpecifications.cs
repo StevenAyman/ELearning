@@ -9,5 +9,6 @@ namespace ELearning.Domain.Shared.Specifications;
 public interface IBaseSpecifications<TEntity>
 {
     Expression<Func<TEntity, bool>> Filter { get; }
-    List<Func<IQueryable<TEntity>, IQueryable<TEntity>>> Includes { get; }
+    List<Expression<Func<TEntity, object>>> Includes { get; }
+    List<string> StringIncludes { get; }
 }

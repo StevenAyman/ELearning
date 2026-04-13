@@ -16,24 +16,28 @@ public sealed class QuestionAnswerVote : BaseEntity
         string id,
         string videoId,
         string questionId,
-        string studentId) : base(id)
+        string studentId,
+        QuestionVoteType voteType) : base(id)
     {
         VideoId = videoId;
         QuestionId = questionId;
         StudentId = studentId;
+        VoteType = voteType;
     }
 
     public string VideoId { get; private set; }
     public string QuestionId { get; private set; }
     public string StudentId { get; private set; }
+    public QuestionVoteType VoteType { get; private set; }
 
     public static QuestionAnswerVote Create(
         string id,
         string videoId,
         string quesitonId,
-        string studentId)
+        string studentId,
+        QuestionVoteType voteType)
     {
-        var question = new QuestionAnswerVote(id, videoId, quesitonId, studentId);
+        var question = new QuestionAnswerVote(id, videoId, quesitonId, studentId, voteType);
         question.RaiseDomainEvent(new QuestionVotedDomainEvent(studentId, quesitonId, videoId));
 
         return question;

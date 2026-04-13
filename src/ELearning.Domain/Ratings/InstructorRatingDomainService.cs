@@ -14,12 +14,12 @@ public sealed class InstructorRatingDomainService
 {
     private readonly IPurchaseRepository _purchaseRespository;
     private readonly ISessionRepository _sessionRespository;
-    private readonly IInstructorsRating _instructorRatingRepo;
+    private readonly IInstructorsRatingRepository _instructorRatingRepo;
 
     public InstructorRatingDomainService(
         IPurchaseRepository purchaseRepository, 
         ISessionRepository sessionRepository, 
-        IInstructorsRating instructorsRatingRepository)
+        IInstructorsRatingRepository instructorsRatingRepository)
     {
         _purchaseRespository = purchaseRepository;
         _sessionRespository = sessionRepository;

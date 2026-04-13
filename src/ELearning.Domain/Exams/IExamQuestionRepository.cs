@@ -9,8 +9,10 @@ using ELearning.Domain.Shared.Specifications;
 namespace ELearning.Domain.Exams;
 public interface IExamQuestionRepository
 {
-    Task<ExamQuestion> GetByIdAsync(string id, CancellationToken cancellationToken = default);
-    Task<ExamQuestion> GetWithSpecAsync(IBaseSpecifications<ExamQuestion> spec, CancellationToken cancellationToken = default);
-    Task<IEnumerable<ExamQuestion>> GetAllWithSpecAsync(IBaseSpecifications<ExamQuestion> spec, CancellationToken cancellationToken = default);
-    void Add(ExamQuestion questions);
+    Task<ExamQuestion?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+    Task<ExamQuestion?> GetWithSpecAsync(IBaseSpecifications<ExamQuestion> spec, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<ExamQuestion>> GetAllWithSpecAsync(IBaseSpecifications<ExamQuestion> spec, CancellationToken cancellationToken = default);
+    void Add(ExamQuestion question);
+    void Update(ExamQuestion question);
+    void Delete(ExamQuestion question);
 }

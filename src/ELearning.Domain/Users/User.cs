@@ -16,7 +16,8 @@ public sealed class User : BaseEntity
         LastName lastName,
         Email email,
         Date dateOfBirth,
-        string city) : base(id)
+        string city,
+        string identityId) : base(id)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -24,6 +25,7 @@ public sealed class User : BaseEntity
         DateOfBirth = dateOfBirth;
         JoinedOnUtc = DateTime.UtcNow;
         City = city;
+        IdentityId = identityId;
     }
 
     public FirstName FirstName { get; private set; }
@@ -32,10 +34,19 @@ public sealed class User : BaseEntity
     public Date DateOfBirth { get; private set; }
     public string City { get; private set; }
     public DateTime JoinedOnUtc { get; private set; }
+    public string IdentityId { get; private set; }
 
-    public static User Register(string id, FirstName firstName, LastName lastName, Email email, Date dateOfBirth, string city, DateTime utcNow)
+    public static User Register(
+        string id, 
+        FirstName firstName, 
+        LastName lastName,
+        Email email, 
+        Date dateOfBirth, 
+        string city, 
+        DateTime utcNow, 
+        string identityId)
     {
-        var user = new User(id, firstName, lastName, email, dateOfBirth, city);
+        var user = new User(id, firstName, lastName, email, dateOfBirth, city, identityId);
         user.JoinedOnUtc = utcNow;
         user.RaiseDomainEvent(new UserRegisteredDomainEvent(user.Id));
         return user;
