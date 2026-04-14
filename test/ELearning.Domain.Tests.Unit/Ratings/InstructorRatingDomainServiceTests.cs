@@ -19,7 +19,7 @@ namespace ELearning.Domain.Tests.Unit.Ratings;
 public sealed class InstructorRatingDomainServiceTests
 {
     private readonly InstructorRatingDomainService _sut;
-    private readonly IInstructorsRating _instructorRatingRepo = Substitute.For<IInstructorsRating>();
+    private readonly IInstructorsRatingRepository _instructorRatingRepo = Substitute.For<IInstructorsRatingRepository>();
     private readonly IPurchaseRepository _purchaseRepo = Substitute.For<IPurchaseRepository>();
     private readonly ISessionRepository _sessionRepo = Substitute.For<ISessionRepository>();
     

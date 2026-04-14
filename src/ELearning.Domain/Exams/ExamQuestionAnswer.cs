@@ -9,7 +9,7 @@ public sealed class ExamQuestionAnswer
 {
     private ExamQuestionAnswer() { }
     public ExamQuestionAnswer(
-        int userQuizId,
+        string userQuizId,
         int questionId,
         string? answer)
     {
@@ -17,8 +17,7 @@ public sealed class ExamQuestionAnswer
         QuestionId = questionId;
         Answer = answer;
     }
-    public int Id { get; private set; }
-    public int UserQuizId { get; private set; }
+    public string UserQuizId { get; private set; }
     public int QuestionId { get; private set; }
     public string? Answer { get; private set; }
 }

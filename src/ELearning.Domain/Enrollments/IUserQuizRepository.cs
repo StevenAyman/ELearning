@@ -8,8 +8,8 @@ using ELearning.Domain.Shared.Specifications;
 namespace ELearning.Domain.Enrollments;
 public interface IUserQuizRepository
 {
-    Task<UserQuiz> GetByIdAsync(string id, CancellationToken cancellationToken = default);
-    Task<UserQuiz> GetWithSpecAsync(IBaseSpecifications<UserQuiz> spec, CancellationToken cancellationToken = default);
-    Task<IEnumerable<UserQuiz>> GetAllWithSpecAsync(IBaseSpecifications<UserQuiz> spec, CancellationToken cancellationToken = default);
+    Task<UserQuiz?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+    Task<UserQuiz?> GetWithSpecAsync(IBaseSpecifications<UserQuiz> spec, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<UserQuiz>> GetAllWithSpecAsync(IBaseSpecifications<UserQuiz> spec, CancellationToken cancellationToken = default);
     void Add(UserQuiz userQuiz);
 }

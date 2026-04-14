@@ -10,10 +10,10 @@ namespace ELearning.Domain.Purchases;
 public interface IPurchaseRepository
 {
     Task<IReadOnlyList<Purchase>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task<Purchase> GetByIdAsync(string purchaseId, CancellationToken cancellationToken = default);
+    Task<Purchase?> GetByIdAsync(string purchaseId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Purchase>> GetAllWithSpecAsync(IBaseSpecifications<Purchase> specs, CancellationToken cancellationToken = default);
-    Task<Purchase> GetWithSpecAsync(IBaseSpecifications<Purchase> specs, CancellationToken cancellationToken = default);
+    Task<Purchase?> GetWithSpecAsync(IBaseSpecifications<Purchase> specs, CancellationToken cancellationToken = default);
     void Add(Purchase purchase);
     void Update(Purchase purchase);
-    void Delete(string id);
+    void Delete(Purchase purchase);
 }

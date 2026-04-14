@@ -127,10 +127,10 @@ public sealed class DiscountDomainServiceTests
         // Arrange
         var codeApplicableAreas = new List<CodeApplicableArea>()
         {
-            new CodeApplicableArea(1, new TypeName(DiscountApplicableAreas.General)),
-            new CodeApplicableArea(2, new TypeName(DiscountApplicableAreas.Instructor)),
-            new CodeApplicableArea(3, new TypeName(DiscountApplicableAreas.Subject)),
-            new CodeApplicableArea(4, new TypeName(DiscountApplicableAreas.Session)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.General)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.Instructor)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.Subject)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.Session)),
         };
         var discountCode = DiscountCode.DiscountCodeBuilder.CreateBuilder()
             .SetId("11")
@@ -160,10 +160,10 @@ public sealed class DiscountDomainServiceTests
         // Arrange
         var codeApplicableAreas = new List<CodeApplicableArea>()
         {
-            new CodeApplicableArea(1, new TypeName(DiscountApplicableAreas.General)),
-            new CodeApplicableArea(2, new TypeName(DiscountApplicableAreas.Instructor)),
-            new CodeApplicableArea(3, new TypeName(DiscountApplicableAreas.Subject)),
-            new CodeApplicableArea(4, new TypeName(DiscountApplicableAreas.Session)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.General)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.Instructor)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.Subject)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.Session)),
         };
         var session = new Session(
             "1", 
@@ -229,105 +229,16 @@ public sealed class DiscountDomainServiceTests
             .WithMessage("The code Areas shouldn't be null");
     }
 
-    [Theory]
-    [InlineData(1, null!)]
-    [InlineData(2, "2")]
-    [InlineData(3, "5")]
-    [InlineData(4, "123")]
-    public void IsDiscountCodeApplicable_ShouldReturnTrue_WhenGivenSessionMatchesDiscountCriteria(int discountArea, string? targetId)
-    {
-        // Arrange
-        var codeApplicableAreas = new List<CodeApplicableArea>()
-        {
-            new CodeApplicableArea(1, new TypeName(DiscountApplicableAreas.General)),
-            new CodeApplicableArea(2, new TypeName(DiscountApplicableAreas.Instructor)),
-            new CodeApplicableArea(3, new TypeName(DiscountApplicableAreas.Subject)),
-            new CodeApplicableArea(4, new TypeName(DiscountApplicableAreas.Session)),
-        };
-        var session = new Session(
-            "123",
-            new Title("Session 01"),
-            new Description("dfd"),
-            new Money(40),
-            SessionStatus.Draft,
-            DateTime.UtcNow,
-            "2",
-            "5");
-
-        var discountCode = DiscountCode.DiscountCodeBuilder.CreateBuilder()
-            .SetId("11")
-            .WithCode("2222")
-            .WithDiscountAmountType(DiscountAmountType.FixedAmount)
-            .WithDiscountAmount(new Money(23))
-            .WithExpirationType(DiscountExpirationType.Period)
-            .WithExpirePeriod(DateRange.Create(new DateTime(2002, 5, 1, 3, 3, 3, 3, DateTimeKind.Utc), DateTime.UtcNow))
-            .Build(DateTime.UtcNow);
-        var codeAreas = new List<CodeAreas>()
-        {
-            new CodeAreas("11", discountArea, targetId)
-        };
-
-        // Act
-        var result =  _sut.IsDiscountCodeApplicable(session, discountCode, codeAreas, codeApplicableAreas);
-
-        // Assert
-        result.Should().BeTrue();
-    }
-
-    [Theory]
-    [InlineData(2, "55")]
-    [InlineData(3, "3")]
-    [InlineData(4, "22")]
-    public void IsDiscountCodeApplicable_ShouldReturnFalse_WhenGivenSessionDoesntMatcheDiscountCriteria(int discountArea, string? targetId)
-    {
-        // Arrange
-        var codeApplicableAreas = new List<CodeApplicableArea>()
-        {
-            new CodeApplicableArea(1, new TypeName(DiscountApplicableAreas.General)),
-            new CodeApplicableArea(2, new TypeName(DiscountApplicableAreas.Instructor)),
-            new CodeApplicableArea(3, new TypeName(DiscountApplicableAreas.Subject)),
-            new CodeApplicableArea(4, new TypeName(DiscountApplicableAreas.Session)),
-        };
-        var session = new Session(
-            "123",
-            new Title("Session 01"),
-            new Description("dfd"),
-            new Money(40),
-            SessionStatus.Draft,
-            DateTime.UtcNow,
-            "2",
-            "5");
-
-        var discountCode = DiscountCode.DiscountCodeBuilder.CreateBuilder()
-            .SetId("11")
-            .WithCode("2222")
-            .WithDiscountAmountType(DiscountAmountType.FixedAmount)
-            .WithDiscountAmount(new Money(23))
-            .WithExpirationType(DiscountExpirationType.Period)
-            .WithExpirePeriod(DateRange.Create(new DateTime(2002, 5, 1, 3, 3, 3, 3, DateTimeKind.Utc), DateTime.UtcNow))
-            .Build(DateTime.UtcNow);
-        var codeAreas = new List<CodeAreas>()
-        {
-            new CodeAreas("11", discountArea, targetId)
-        };
-
-        // Act
-        var result = _sut.IsDiscountCodeApplicable(session, discountCode, codeAreas, codeApplicableAreas);
-
-        // Assert
-        result.Should().BeFalse();
-    }
-
     [Fact]
     public void IsDiscountCodeApplicable_ShouldThrowException_WhenCodeAreasDoesntContainAValidDiscountApplicableArea()
     {
         // Arrange
         var codeApplicableAreas = new List<CodeApplicableArea>()
         {
-            new CodeApplicableArea(1, new TypeName(DiscountApplicableAreas.General)),
-            new CodeApplicableArea(2, new TypeName(DiscountApplicableAreas.Instructor)),
-            new CodeApplicableArea(3, new TypeName(DiscountApplicableAreas.Subject)),
-            new CodeApplicableArea(4, new TypeName(DiscountApplicableAreas.Session)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.General)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.Instructor)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.Subject)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.Session)),
         };
         var session = new Session(
             "1",
@@ -366,10 +277,10 @@ public sealed class DiscountDomainServiceTests
         // Arrange
         var codeApplicableAreas = new List<CodeApplicableArea>()
         {
-            new CodeApplicableArea(1, new TypeName(DiscountApplicableAreas.General)),
-            new CodeApplicableArea(2, new TypeName(DiscountApplicableAreas.Instructor)),
-            new CodeApplicableArea(3, new TypeName(DiscountApplicableAreas.Subject)),
-            new CodeApplicableArea(4, new TypeName(DiscountApplicableAreas.Session)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.General)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.Instructor)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.Subject)),
+            new CodeApplicableArea(new TypeName(DiscountApplicableAreas.Session)),
         };
         var session = new Session(
             "1",

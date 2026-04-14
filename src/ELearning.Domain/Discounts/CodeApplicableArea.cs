@@ -6,10 +6,8 @@ public sealed class CodeApplicableArea
 {
     private CodeApplicableArea() { }
     public CodeApplicableArea(
-        int id,
         TypeName type)
     {
-        Id = id;
         Type = type;
     }
     public int Id { get; private set; }

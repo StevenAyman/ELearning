@@ -10,6 +10,7 @@ public sealed class CodeAreas
         TargetId = targetId;
     }
 
+    public int Id { get; private set; }
     public int AppplicableAreaId { get; private set; }
     public string CodeId { get; private set; }
     public string? TargetId { get; private set; }

@@ -20,7 +20,7 @@ public sealed class UserTests
         var dateOfBirth = Date.Create(new DateOnly(2002, 5, 1));
         var city = "Giza";
         var joinedDate = DateTime.Now;
-        _user = User.Register(id, firstName, lastName, email, dateOfBirth, city, joinedDate);
+        _user = User.Register(id, firstName, lastName, email, dateOfBirth, city, joinedDate, "11");
     }
     [Fact]
     public void Register_ShouldReturnNewUser_WhenDataIsValid()
@@ -35,7 +35,7 @@ public sealed class UserTests
         var joinedDate = DateTime.Now;
 
         // Act
-        var result = User.Register(id, firstName, lastName, email, dateOfBirth, city, joinedDate);
+        var result = User.Register(id, firstName, lastName, email, dateOfBirth, city, joinedDate, "22");
 
         // Assert
         result.Id.Should().Be(id);
@@ -59,7 +59,7 @@ public sealed class UserTests
         var joinedDate = DateTime.Now;
 
         // Act
-        var result = User.Register(id, firstName, lastName, email, dateOfBirth, city, joinedDate);
+        var result = User.Register(id, firstName, lastName, email, dateOfBirth, city, joinedDate, "11");
 
         // Assert
         result.DomainEvents.Should().HaveCount(1);

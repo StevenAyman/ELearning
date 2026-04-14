@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 namespace ELearning.Domain.Shared;
 public interface IUnitOfWork
 {
-    Task<int> SaveChangesAsync();
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

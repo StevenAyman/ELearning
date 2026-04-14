@@ -10,15 +10,21 @@ public class BaseSpecifications<TEntity> : IBaseSpecifications<TEntity>
 {
     public Expression<Func<TEntity, bool>> Filter { get; }
 
-    public List<Func<IQueryable<TEntity>, IQueryable<TEntity>>> Includes { get; } = new();
+    public List<Expression<Func<TEntity, object>>> Includes { get; } = new();
+    public List<string> StringIncludes { get; } = new();
 
     public BaseSpecifications(Expression<Func<TEntity,bool>> filter)
     {
         Filter = filter;
     }
 
-    protected void AddIncludes(Func<IQueryable<TEntity>, IQueryable<TEntity>> include)
+    protected void AddIncludes(Expression<Func<TEntity, object>> include)
     {
         Includes.Add(include);
+    }
+
+    protected void AddStringIncludes(string include)
+    {
+        StringIncludes.Add(include);
     }
 }

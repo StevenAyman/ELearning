@@ -18,3 +18,30 @@ services:
     ports:
       - 18888:18888
 
+  elearning.sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql_server_db
+    ports:
+     - 1433:1433
+    environment:
+     - ACCEPT_EULA=Y
+     - MSSQL_SA_PASSWORD=P@ssw0rd
+     - MSSQL_PID=Developer
+    volumes:
+     - mssql_data:/var/opt/mssql
+    restart: always
+
+  elearning.redis:
+    image: redis:7.2-alpine
+    container_name: redis_cache
+    ports:
+     - 6379:6379
+    volumes:
+     - redis_data:/data
+    restart: always
+    
+
+volumes:
+  mssql_data:
+  redis_data:
+
