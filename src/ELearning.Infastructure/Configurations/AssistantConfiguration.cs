@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ELearning.Domain.Assistants;
+using ELearning.Domain.Instructors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,6 +23,7 @@ public sealed class AssistantConfiguration : IEntityTypeConfiguration<Assistant>
             .HasMaxLength(50)
             .IsRequired();
 
+        // Relationship
         builder.HasIndex(a => a.InstructorId);
     }
 }

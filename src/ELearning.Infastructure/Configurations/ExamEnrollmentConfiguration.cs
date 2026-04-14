@@ -31,16 +31,19 @@ public sealed class ExamEnrollmentConfiguration : IEntityTypeConfiguration<ExamE
         builder.HasOne<Exam>()
             .WithMany()
             .HasForeignKey(e => e.ExamId)
-            .IsRequired();
+            .IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Purchase>()
             .WithOne()
-            .HasForeignKey<ExamEnrollment>(e => e.PurchaseId);
+            .HasForeignKey<ExamEnrollment>(e => e.PurchaseId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Student>()
             .WithMany()
             .HasForeignKey(e => e.StudentId)
-            .IsRequired();
+            .IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasKey(e => new { e.PurchaseId, e.StudentId, e.ExamId });
 

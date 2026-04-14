@@ -56,19 +56,20 @@ public sealed class ExamConfiguration : IEntityTypeConfiguration<Exam>
 
         // Relationships
         builder.HasMany(e => e.Questions)
-            .WithOne();
+            .WithOne()
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Instructor>()
             .WithMany()
             .HasForeignKey(e => e.InstructorId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Subject>()
             .WithMany()
             .HasForeignKey(e => e.SubjectId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasIndex(e => e.InstructorId);
         builder.HasIndex(e => e.SubjectId);

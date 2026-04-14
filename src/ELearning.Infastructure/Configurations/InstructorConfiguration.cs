@@ -29,7 +29,7 @@ public sealed class InstructorConfiguration : IEntityTypeConfiguration<Instructo
         builder.OwnsOne(i => i.Rating, ratingBuilder =>
         {
             ratingBuilder.Property(r => r.Average)
-                .HasColumnType("deciaml(18,2)")
+                .HasColumnType("decimal(18,2)")
                 .HasConversion(rating => rating.Value, value => Rating.CreateRating(value));
 
             ratingBuilder.Property(r => r.Count)
@@ -51,7 +51,8 @@ public sealed class InstructorConfiguration : IEntityTypeConfiguration<Instructo
         // Relationships
         builder.HasMany<Assistant>()
             .WithOne()
-            .HasForeignKey(a => a.InstructorId);
+            .HasForeignKey(a => a.InstructorId)
+            .OnDelete(DeleteBehavior.NoAction);
 
     }
 }

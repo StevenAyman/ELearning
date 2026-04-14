@@ -45,19 +45,19 @@ public sealed class SessionQuizConfiguration : IEntityTypeConfiguration<SessionQ
         builder.HasMany(sq => sq.Questions)
             .WithOne()
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Instructor>()
             .WithMany()
             .HasForeignKey(sq => sq.InstructorId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Subject>()
             .WithMany()
             .HasForeignKey(sq => sq.SubjectId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasIndex(sq => sq.SubjectId);
         builder.HasIndex(sq => sq.InstructorId);

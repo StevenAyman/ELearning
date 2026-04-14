@@ -27,6 +27,7 @@ public sealed class SubjectConfiguration : IEntityTypeConfiguration<Subject>
         // Relationships
         builder.HasMany<Instructor>()
             .WithOne()
-            .HasForeignKey(i => i.SubjectId);
+            .HasForeignKey(i => i.SubjectId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

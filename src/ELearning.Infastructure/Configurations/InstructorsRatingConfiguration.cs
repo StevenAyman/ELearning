@@ -31,11 +31,13 @@ public sealed class InstructorsRatingConfiguration : IEntityTypeConfiguration<In
         // Relationships
         builder.HasOne<Instructor>()
             .WithMany()
-            .HasForeignKey(ir => ir.InstructorId);
+            .HasForeignKey(ir => ir.InstructorId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Student>()
             .WithMany()
-            .HasForeignKey(ir => ir.StudentId);
+            .HasForeignKey(ir => ir.StudentId)
+            .OnDelete(DeleteBehavior.NoAction);
 
     }
 }

@@ -78,6 +78,7 @@ public sealed class EnrollmentConfiguration : IEntityTypeConfiguration<Enrollmen
         builder.HasIndex(e => e.SessionId);
 
         builder.HasMany(e => e.Tanks)
-            .WithOne();
+            .WithOne()
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

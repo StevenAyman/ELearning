@@ -30,7 +30,7 @@ public sealed class VideoConfiguration : IEntityTypeConfiguration<Video>
             .HasConversion(order => order.Value, value => VideoOrder.Create(value));
 
         builder.Property(v => v.ThresholdPercentage)
-            .HasColumnType("deicmal(18,2)")
+            .HasColumnType("decimal(18,2)")
             .HasConversion(percentage => percentage.Value, value => Percentage.Create(value));
 
         builder.Property(v => v.MaxViewCount)
@@ -45,7 +45,7 @@ public sealed class VideoConfiguration : IEntityTypeConfiguration<Video>
             .WithOne()
             .HasForeignKey<Video>(v => v.PrerequisiteId)
             .IsRequired(false)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasIndex(v => v.PrerequisiteId);
     }

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using ELearning.Application.Abstractions.Clock;
+using ELearning.Application.Abstractions.Data;
 using ELearning.Domain.Discounts;
 using ELearning.Domain.Enrollments;
 using ELearning.Domain.Exams;
@@ -15,12 +17,23 @@ using ELearning.Domain.Sessions;
 using ELearning.Domain.Shared;
 using ELearning.Domain.Subjects;
 using ELearning.Domain.Users;
+using ELearning.Infastructure.Clock;
 using ELearning.Infastructure.Data;
+using ELearning.Infastructure.Outbox;
 using ELearning.Infastructure.Repositories;
+using Hangfire;
+using Hangfire.SqlServer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using ZiggyCreatures.Caching.Fusion;
+using ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis;
+using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
 namespace ELearning.Infastructure;
 
@@ -30,19 +43,42 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("Database") ??
+        services.AddTransient<IDateTimeProvider, DateTimeProvider>();
+
+        AddPersistance(services, configuration);
+        AddRepositories(services);
+        AddCaching(services, configuration);
+        AddBackgroundJobs(services, configuration);
+        
+        return services;
+    }
+
+    public static void AddCaching(IServiceCollection services, IConfiguration configuration)
+    {
+        var redisConnection = configuration.GetConnectionString("Redis") ??
             throw new ArgumentNullException(nameof(configuration));
 
-        services.AddDbContext<AppDbContext>(options =>
+        services.AddStackExchangeRedisCache(options =>
         {
-
-            options.UseSqlServer(connectionString)
-            .UseSnakeCaseNamingConvention();
+            options.Configuration = redisConnection;
         });
+        services.AddFusionCache()
+            .WithDefaultEntryOptions(options =>
+            {
+                options.Duration = TimeSpan.FromMinutes(5);
+                options.IsFailSafeEnabled = true;
+            })
+            .WithSerializer(new FusionCacheSystemTextJsonSerializer())
+            .WithDistributedCache(sp => sp.GetRequiredService<IDistributedCache>())
+            .WithBackplane(new RedisBackplane(new RedisBackplaneOptions
+            {
+                Configuration = redisConnection
+            }))
+            .AsHybridCache();
+    }
 
-        services.AddScoped<IDbConnection>(_ => new SqlConnection(connectionString));
-        SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
-
+    public static void AddRepositories(IServiceCollection services)
+    {
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AppDbContext>());
         // Repositories Start
         services.AddScoped(typeof(IUserRepository<>), typeof(UserRepository<>));
@@ -68,7 +104,68 @@ public static class DependencyInjection
         services.AddScoped<ICodeAreasRepository, CodeAreasRepository>();
         services.AddScoped<IDiscountCodeRepository, DiscountCodeRepository>();
         // Repositories End
-
-        return services;
     }
+
+    public static void AddPersistance(IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("Database") ??
+            throw new ArgumentNullException(nameof(configuration));
+
+        services.AddDbContext<AppDbContext>(options =>
+        {
+
+            options.UseSqlServer(connectionString)
+            .UseSnakeCaseNamingConvention();
+        });
+
+        services.AddScoped<IDbConnectionFactory>(_ => new DbConnectionFactory(connectionString));
+        SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
+
+    }
+    
+    public static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("Database") ??
+                                throw new ArgumentNullException(nameof(configuration)); 
+
+        services.AddOptions<OutboxOptions>().BindConfiguration(OutboxOptions.SectionName);
+        services.AddHangfire(config =>
+        {
+            config.UseSqlServerStorage(connectionString, new SqlServerStorageOptions()
+            {
+                PrepareSchemaIfNecessary = true,
+
+                SchemaName = "Hangfire"
+            });
+
+        });
+
+        services.AddHangfireServer(config =>
+        {
+            config.SchedulePollingInterval = TimeSpan.FromSeconds(1);
+        });
+
+        services.AddScoped<IProcessOutboxMessageJob, ProcessOutboxMessageJob>();
+    }
+
+    public static async Task<WebApplication> ApplyMigrationsAsync(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<AppDbContext>>();
+
+        try
+        {
+            logger.LogInformation("Starting to migrate all pending migrations.");
+            await dbContext.Database.MigrateAsync();
+
+            logger.LogInformation("Completed all pending migration successfully");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "An error has occurred while trying to apply migrations");
+        }
+
+        return app;
+    } 
 }

@@ -64,24 +64,26 @@ public sealed class SessionConfiguration : IEntityTypeConfiguration<Session>
         // Relationships
 
         builder.HasMany(s => s.Videos)
-            .WithOne();
+            .WithOne()
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Instructor>()
             .WithMany()
             .HasForeignKey(s => s.InstructorId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Subject>()
             .WithMany()
             .HasForeignKey(s => s.SubjectId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(s => s.Quiz)
             .WithOne()
+            .HasForeignKey<Session>()
             .IsRequired(false)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasIndex(s => s.InstructorId);
         builder.HasIndex(s => s.SubjectId);

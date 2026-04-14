@@ -30,11 +30,13 @@ public sealed class CodeAreasConfiguration : IEntityTypeConfiguration<CodeAreas>
         builder.HasOne<CodeApplicableArea>()
             .WithMany()
             .HasForeignKey(ca => ca.AppplicableAreaId)
-            .IsRequired();
+            .IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<DiscountCode>()
             .WithMany()
-            .HasForeignKey(ca => ca.CodeId);
+            .HasForeignKey(ca => ca.CodeId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasIndex(ca => new { ca.AppplicableAreaId, ca.CodeId });
 

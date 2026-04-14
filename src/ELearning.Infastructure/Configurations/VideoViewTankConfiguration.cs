@@ -33,13 +33,13 @@ public sealed class VideoViewTankConfiguration : IEntityTypeConfiguration<VideoV
             .WithMany()
             .HasForeignKey(vt => vt.VideoId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasOne<Enrollment>()
-            .WithMany()
-            .HasForeignKey(vt => vt.EnrollmentId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasOne<Enrollment>()
+        //    .WithMany()
+        //    .HasForeignKey(vt => vt.EnrollmentId)
+        //    .IsRequired()
+        //    .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasIndex(vt => new { vt.EnrollmentId, vt.VideoId })
             .IsUnique();

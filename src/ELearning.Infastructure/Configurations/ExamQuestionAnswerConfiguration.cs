@@ -19,17 +19,20 @@ public sealed class ExamQuestionAnswerConfiguration : IEntityTypeConfiguration<E
             .IsRequired(false)
             .HasMaxLength(1000);
 
+        builder.Property(a => a.UserQuizId)
+            .HasMaxLength(50);
+
         // Relationships
         builder.HasOne<ExamQuestion>()
             .WithMany()
             .HasForeignKey(a => a.QuestionId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<UserQuiz>()
             .WithMany()
             .HasForeignKey(a => a.UserQuizId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

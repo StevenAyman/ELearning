@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace ELearning.Infastructure.Outbox;
 public sealed class OutboxOptions
 {
-    public int InternalInSeconds { get; init; }
+    public const string SectionName = "BackgroundJobs:Outbox";
+    public string Schedule { get; init; }
     public int BatchSize { get; init; }
 }

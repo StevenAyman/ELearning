@@ -36,6 +36,7 @@ public sealed class ExamQuestionConfiguration : IEntityTypeConfiguration<ExamQue
 
         builder.HasOne(eq => eq.CorrectAnswer)
             .WithOne()
+            .HasForeignKey<ExamQuestion>("correct_answer_id")
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(eq => eq.McqQuestionAnswers)

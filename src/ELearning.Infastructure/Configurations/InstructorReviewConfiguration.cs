@@ -31,11 +31,11 @@ public sealed class InstructorReviewConfiguration : IEntityTypeConfiguration<Ins
         builder.HasOne<Instructor>()
             .WithMany()
             .HasForeignKey(ir => ir.InstructorId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Student>()
             .WithMany()
             .HasForeignKey(ir => ir.StudentId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

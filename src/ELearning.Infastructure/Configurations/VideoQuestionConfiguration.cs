@@ -42,7 +42,7 @@ public sealed class VideoQuestionConfiguration : IEntityTypeConfiguration<VideoQ
             .WithMany()
             .HasForeignKey(q => q.VideoId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasIndex(q => q.VideoId);
 
@@ -50,7 +50,7 @@ public sealed class VideoQuestionConfiguration : IEntityTypeConfiguration<VideoQ
             .WithMany()
             .HasForeignKey(q => q.StudentId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasIndex(q => q.StudentId);
 
@@ -58,7 +58,7 @@ public sealed class VideoQuestionConfiguration : IEntityTypeConfiguration<VideoQ
             .WithMany()
             .HasForeignKey(q => q.SessionId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasIndex(q => q.SessionId);
 

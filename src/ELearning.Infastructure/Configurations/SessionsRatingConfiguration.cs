@@ -31,10 +31,12 @@ public sealed class SessionsRatingConfiguration : IEntityTypeConfiguration<Sessi
         // Relationships
         builder.HasOne<Session>()
             .WithMany()
-            .HasForeignKey(sr => sr.SessionId);
+            .HasForeignKey(sr => sr.SessionId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Student>()
             .WithMany()
-            .HasForeignKey(sr => sr.StudentId);
+            .HasForeignKey(sr => sr.StudentId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

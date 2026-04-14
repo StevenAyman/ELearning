@@ -63,15 +63,18 @@ public sealed class PurchaseConfiguration : IEntityTypeConfiguration<Purchase>
 
         builder.HasOne<Student>()
             .WithMany()
-            .HasForeignKey(p => p.StudentId);
+            .HasForeignKey(p => p.StudentId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Session>()
             .WithMany()
-            .HasForeignKey(p => p.SessionId);
+            .HasForeignKey(p => p.SessionId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Exam>()
             .WithMany()
-            .HasForeignKey(p => p.ExamId);
+            .HasForeignKey(p => p.ExamId)
+            .OnDelete(DeleteBehavior.NoAction);
 
 
     }

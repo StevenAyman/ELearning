@@ -53,18 +53,19 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasOne<Student>()
             .WithOne()
             .HasForeignKey<Student>(s => s.Id)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Instructor>()
             .WithOne()
             .HasForeignKey<Instructor>(i => i.Id)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Assistant>()
             .WithOne()
             .HasForeignKey<Assistant>(a => a.Id)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction)
+            ;
 
 
     }
