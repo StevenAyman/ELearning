@@ -1,4 +1,11 @@
-﻿using OpenTelemetry;
+﻿using ELearning.Api.Exceptions;
+using ELearning.Api.Helpers;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.BearerToken;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -10,16 +17,27 @@ public static class DependencyInjection
 {
     public static WebApplicationBuilder AddPresentation(this WebApplicationBuilder app)
     {
-        app.Services.AddControllers();
-        app.Services.AddOpenApi();
+        app.Services.AddControllers(options =>
+        {
+            options.ReturnHttpNotAcceptable = true;
+        })
+        .AddXmlSerializerFormatters()
+        .AddNewtonsoftJson();
 
-
-        app.AddOpenTelemtery();
-        app.AddSerilog();
+        AddProblemDetails(app);
+        
+        AddSecurity(app);
+        
+        AddOpenTelemtery(app);
+        
+        AddSerilog(app);
+        
+        AddSwagger(app);
+        
         return app;
     }
 
-    public static WebApplicationBuilder AddOpenTelemtery(this WebApplicationBuilder app)
+    public static void AddOpenTelemtery(WebApplicationBuilder app)
     {
         app.Services.AddOpenTelemetry()
             .ConfigureResource(resource => resource.AddService(app.Environment.ApplicationName))
@@ -37,12 +55,9 @@ public static class DependencyInjection
             options.IncludeFormattedMessage = true;
             options.IncludeScopes = true;
         });
-
-
-        return app;
     }
 
-    public static WebApplicationBuilder AddSerilog(this WebApplicationBuilder app)
+    public static void AddSerilog(WebApplicationBuilder app)
     {
         app.Host.UseSerilog((context, services, configuration) =>
         {
@@ -50,7 +65,124 @@ public static class DependencyInjection
             .ReadFrom.Configuration(context.Configuration)
             .ReadFrom.Services(services);
         }, writeToProviders: true);
+    }
 
-        return app;
+    public static void AddSwagger(WebApplicationBuilder app)
+    {
+        //app.Services.AddOpenApi();
+
+        app.Services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new OpenApiInfo()
+            {
+                Title = "ELearning",
+                Version = "v1",
+
+            });
+
+            // form 2 to generate the swagger documentation
+            foreach (var name in Directory.GetFiles(AppContext.BaseDirectory, "*.XML", SearchOption.TopDirectoryOnly))
+            {
+                options.IncludeXmlComments(filePath: name);
+            }
+
+            // second form to give Authorization with out whrite the world Bearer
+            var securityScheme = new OpenApiSecurityScheme()
+            {
+                Type = SecuritySchemeType.OAuth2,
+                Flows = new OpenApiOAuthFlows()
+                {
+                    AuthorizationCode = new OpenApiOAuthFlow()
+                    {
+                        AuthorizationUrl = new Uri(app.Configuration["Keycloak:AuthorizationUrl"]!),
+                        TokenUrl = new Uri(app.Configuration["Keycloak:TokenUrl"]!),
+                        Scopes = new Dictionary<string, string>
+                        {
+                             { "openid", "OpenID Connect scope" },
+                             { "profile", "User profile" }
+                        }
+                    }
+                }
+            };
+
+            var securityRequirement = new OpenApiSecurityRequirement
+           {
+                 {
+                     new OpenApiSecurityScheme
+                     {
+                         Reference = new OpenApiReference
+                         {
+                             Type = ReferenceType.SecurityScheme,
+                             Id = "Keycloak"
+                         }
+                     },
+                     []
+                 }
+             };
+            options.AddSecurityDefinition("Keycloak", securityScheme);
+            options.AddSecurityRequirement(securityRequirement);
+
+        });
+
+    }
+
+    public static void AddSecurity(WebApplicationBuilder app)
+    {
+
+        app.Services.AddScoped<IClaimsTransformation, PermissionClaimsTransformation>();
+        //app.Services.AddAuthorizationBuilder()
+        //    .AddPolicy("users:read", policy => policy.RequirePermission(Permissions.UsersRead));
+        app.Services.AddAuthentication(config =>
+        {
+            config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+            .AddJwtBearer(config =>
+            {
+                config.RequireHttpsMetadata = false;
+                config.Audience = app.Configuration["Keycloak:Audience"];
+                config.MetadataAddress = app.Configuration["Keycloak:MetadataAddress"]!;
+                config.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = app.Configuration["Keycloak:Issuer"],
+                };
+
+                config.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        // Put a breakpoint here!
+                        var message = context.Exception.Message;
+                        Console.WriteLine("Auth Failed: " + message);
+                        Console.WriteLine($"Keys loaded: {context.Options.ConfigurationManager != null}");
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        Console.WriteLine("Token Validated Successfully!");
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
+        app.Services.AddAuthorization();
+    }
+
+    public static void AddProblemDetails(WebApplicationBuilder app)
+    {
+        app.Services.AddProblemDetails(config =>
+        {
+            config.CustomizeProblemDetails = ctx =>
+            {
+                ctx.ProblemDetails.Instance = $"{ctx.HttpContext.Request.Method} {ctx.HttpContext.Request.Path}";
+                ctx.ProblemDetails.Extensions.Add("request-id", ctx.HttpContext.TraceIdentifier);
+                ctx.ProblemDetails.Extensions.Add("correlation-id", ctx.HttpContext.Request.Headers["X-Correlation-ID"]);
+                ctx.ProblemDetails.Extensions.Add("timestamp", DateTime.UtcNow);
+            };
+        });
+
+        app.Services.AddExceptionHandler<ValidationExceptionHandler>();
+        app.Services.AddExceptionHandler<GlobalExceptionHandler>();
     }
 }
