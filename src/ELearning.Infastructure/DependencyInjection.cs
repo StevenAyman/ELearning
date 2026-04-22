@@ -19,6 +19,7 @@ using ELearning.Domain.Subjects;
 using ELearning.Domain.Users;
 using ELearning.Infastructure.Clock;
 using ELearning.Infastructure.Data;
+using ELearning.Infastructure.Data.Authorization;
 using ELearning.Infastructure.Outbox;
 using ELearning.Infastructure.Repositories;
 using Hangfire;
@@ -103,6 +104,7 @@ public static class DependencyInjection
         services.AddScoped<ICodeApplicableAreaRepository, CodeApplicableAreaRepository>();
         services.AddScoped<ICodeAreasRepository, CodeAreasRepository>();
         services.AddScoped<IDiscountCodeRepository, DiscountCodeRepository>();
+        services.AddScoped<IPermissionService, PermissionService>();
         // Repositories End
     }
 

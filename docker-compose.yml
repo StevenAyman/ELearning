@@ -39,7 +39,55 @@ services:
     volumes:
      - redis_data:/data
     restart: always
-    
+
+  elearning.mssql-init:
+    image: mcr.microsoft.com/mssql-tools
+    container_name: elearning.mssql-init
+    depends_on:
+      - elearning.sqlserver
+    environment:
+      - MSSQL_SA_PASSWORD=P@ssw0rd
+    command: >
+      /bin/bash -c "
+      echo 'Waiting for MSSQL to be ready...';
+      until /opt/mssql-tools/bin/sqlcmd -S elearning.sqlserver -U sa -P \"$${MSSQL_SA_PASSWORD}\" -Q 'SELECT 1' > /dev/null 2>&1;
+      do
+        echo 'SQL Server is unavailable - sleeping';
+        sleep 2;
+      done;
+
+      echo '1. Creating Keycloak database if missing...';
+      /opt/mssql-tools/bin/sqlcmd -S elearning.sqlserver -U sa -P \"$${MSSQL_SA_PASSWORD}\" -Q \"IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = N'Keycloak') BEGIN CREATE DATABASE Keycloak COLLATE Latin1_General_100_CS_AS; END\";
+
+      echo '2. Enabling Snapshot Isolation...';
+      /opt/mssql-tools/bin/sqlcmd -S elearning.sqlserver -U sa -P \"$${MSSQL_SA_PASSWORD}\" -Q \"ALTER DATABASE Keycloak SET ALLOW_SNAPSHOT_ISOLATION ON; ALTER DATABASE Keycloak SET READ_COMMITTED_SNAPSHOT ON;\";
+
+      echo '3. Enabling XA Transactions...';
+      /opt/mssql-tools/bin/sqlcmd -S elearning.sqlserver -U sa -P \"$${MSSQL_SA_PASSWORD}\" -d master -Q \"IF NOT EXISTS (SELECT * FROM sys.objects WHERE name = 'sp_sqljdbc_xa_install') BEGIN EXEC sp_sqljdbc_xa_install; END\";
+
+      echo 'Database initialization complete.';"
+  
+  elearning.keycloak:
+    image: quay.io/keycloak/keycloak:26.5.2
+    container_name: elearning.keycloak
+    environment:
+     - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+     - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+     - KC_HEALTH_ENABLED=true
+     - KC_DB=mssql
+     - KC_DB_URL=jdbc:sqlserver://elearning.sqlserver:1433;databaseName=Keycloak;encrypt=false;trustServerCertificate=true
+     - KC_DB_USERNAME=sa
+     - KC_DB_PASSWORD=P@ssw0rd
+    ports:
+     - 18080:8080
+     - 9000:9000
+    volumes:
+     - ./.container/keycloak/realm-export.json:/opt/keycloak/data/import/realm.json
+    command: start-dev --import-realm
+    depends_on:
+      elearning.mssql-init:
+       condition: service_completed_successfully
+
 
 volumes:
   mssql_data:
