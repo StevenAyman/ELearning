@@ -9,6 +9,7 @@
 		<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<NoWarn>$(NoWarn);CA1873</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">
