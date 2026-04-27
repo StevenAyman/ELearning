@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -8,11 +9,13 @@ using System.Threading.Tasks;
 using ELearning.Domain.Shared;
 using ELearning.Infastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json;
 
 namespace ELearning.Infastructure;
 public sealed class AppDbContext : DbContext, IUnitOfWork
 {
+    private IDbContextTransaction _transaction;
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
@@ -55,4 +58,26 @@ public sealed class AppDbContext : DbContext, IUnitOfWork
         AddRange(outboxMessages);
     }
 
+    public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
+    {
+        _transaction =  await Database.BeginTransactionAsync(cancellationToken);
+    }
+
+    public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
+    {
+        if (_transaction != null)
+        {
+            await _transaction.CommitAsync(cancellationToken);
+            await _transaction.DisposeAsync();
+        }
+    }
+
+    public async Task RollbackTransactoinAsync(CancellationToken cancellationToken = default)
+    {
+        if (_transaction != null)
+        {
+            await _transaction.RollbackAsync(cancellationToken);
+            await _transaction.DisposeAsync();
+        }
+    }
 }

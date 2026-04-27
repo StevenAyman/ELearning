@@ -1,5 +1,8 @@
-﻿using ELearning.Api.Exceptions;
+﻿using System.Reflection;
+using ELearning.Api.BackgroundJobs;
+using ELearning.Api.Exceptions;
 using ELearning.Api.Helpers;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,9 +23,12 @@ public static class DependencyInjection
         app.Services.AddControllers(options =>
         {
             options.ReturnHttpNotAcceptable = true;
+            options.RespectBrowserAcceptHeader = true;
         })
         .AddXmlSerializerFormatters()
         .AddNewtonsoftJson();
+
+        app.Services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection));
 
         AddProblemDetails(app);
         
@@ -33,7 +39,10 @@ public static class DependencyInjection
         AddSerilog(app);
         
         AddSwagger(app);
-        
+
+        AddBackgroundJobsServices(app);
+
+
         return app;
     }
 
@@ -43,6 +52,7 @@ public static class DependencyInjection
             .ConfigureResource(resource => resource.AddService(app.Environment.ApplicationName))
             .WithTracing(tracing => tracing
                 .AddAspNetCoreInstrumentation()
+                .AddEntityFrameworkCoreInstrumentation()
                 .AddHttpClientInstrumentation())
             .WithMetrics(metrics => metrics
                 .AddAspNetCoreInstrumentation()
@@ -122,6 +132,10 @@ public static class DependencyInjection
             options.AddSecurityDefinition("Keycloak", securityScheme);
             options.AddSecurityRequirement(securityRequirement);
 
+            string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            options.IncludeXmlComments(xmlPath);
+
         });
 
     }
@@ -184,5 +198,11 @@ public static class DependencyInjection
 
         app.Services.AddExceptionHandler<ValidationExceptionHandler>();
         app.Services.AddExceptionHandler<GlobalExceptionHandler>();
+    }
+
+    public static void AddBackgroundJobsServices(WebApplicationBuilder app)
+    {
+        app.Services.AddScoped<KeycloakRegisterUserJob>();
+        app.Services.AddScoped<KeycloakUpdateUserEmailJob>();
     }
 }

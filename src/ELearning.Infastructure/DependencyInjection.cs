@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using ELearning.Application.Abstractions.Cache;
 using ELearning.Application.Abstractions.Clock;
 using ELearning.Application.Abstractions.Data;
 using ELearning.Domain.Discounts;
@@ -17,11 +19,14 @@ using ELearning.Domain.Sessions;
 using ELearning.Domain.Shared;
 using ELearning.Domain.Subjects;
 using ELearning.Domain.Users;
+using ELearning.Infastructure.Caching;
 using ELearning.Infastructure.Clock;
 using ELearning.Infastructure.Data;
 using ELearning.Infastructure.Data.Authorization;
 using ELearning.Infastructure.Outbox;
 using ELearning.Infastructure.Repositories;
+using ELearning.Infastructure.Services.KeycloakService;
+using ELearning.Infastructure.Services.KeycloakService.DTOs;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
@@ -32,6 +37,9 @@ using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.Retry;
+using Refit;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis;
 using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
@@ -50,7 +58,9 @@ public static class DependencyInjection
         AddRepositories(services);
         AddCaching(services, configuration);
         AddBackgroundJobs(services, configuration);
-        
+        AddRefit(services, configuration);
+
+
         return services;
     }
 
@@ -76,6 +86,8 @@ public static class DependencyInjection
                 Configuration = redisConnection
             }))
             .AsHybridCache();
+
+        services.AddSingleton<ICacheService, CacheService>();
     }
 
     public static void AddRepositories(IServiceCollection services)
@@ -105,7 +117,12 @@ public static class DependencyInjection
         services.AddScoped<ICodeAreasRepository, CodeAreasRepository>();
         services.AddScoped<IDiscountCodeRepository, DiscountCodeRepository>();
         services.AddScoped<IPermissionService, PermissionService>();
+        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AppDbContext>());
         // Repositories End
+
+        // Read Services Start
+        services.AddScoped<IUserReadService, UserReadService>();
+        // Read Services End
     }
 
     public static void AddPersistance(IServiceCollection services, IConfiguration configuration)
@@ -148,6 +165,43 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IProcessOutboxMessageJob, ProcessOutboxMessageJob>();
+    }
+
+    public static void AddRefit(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<KeycloakTokenRequest>()
+            .Bind(configuration.GetSection("KeycloakOptions"));
+
+        services.AddOptions<KeycloakOptions>()
+            .Bind(configuration.GetSection("KeycloakOptions"));
+
+        var baseUrl = configuration["KeycloakOptions:BaseUrl"];
+
+        services.AddTransient<KeycloakAccessTokenHandler>();
+        services.AddTransient<KeycloakAdminApiService>();
+
+        services.AddRefitClient<IKeycloakAuthApi>()
+            .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUrl!));
+
+        services.AddRefitClient<IKeycloakAdminApi>()
+            .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUrl!))
+            .AddHttpMessageHandler<KeycloakAccessTokenHandler>()
+            .AddResilienceHandler("keycloak-retry", pipeline =>
+            {
+                pipeline.AddRetry(new RetryStrategyOptions<HttpResponseMessage>
+                {
+                    
+                    BackoffType = DelayBackoffType.Exponential,
+                    Delay = TimeSpan.FromSeconds(1),
+                    MaxRetryAttempts = 5,
+                    UseJitter = true,
+                    ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
+                        .Handle<HttpRequestException>()
+                        .HandleResult(rm => rm.StatusCode == HttpStatusCode.NotFound)
+                });
+            });
+
+
     }
 
     public static async Task<WebApplication> ApplyMigrationsAsync(this WebApplication app)

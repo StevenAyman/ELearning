@@ -78,11 +78,16 @@ services:
      - KC_DB_URL=jdbc:sqlserver://elearning.sqlserver:1433;databaseName=Keycloak;encrypt=false;trustServerCertificate=true
      - KC_DB_USERNAME=sa
      - KC_DB_PASSWORD=P@ssw0rd
+     - KC_EVENT_LISTENERS=webhook,logging
+     - WEBHOOK_HTTP_URL=http://host.docker.internal:5000/api/keycloak/webhooks
+     - WEBHOOK_HTTP_BASE_PATH=http://host.docker.internal:5000/api/keycloak/webhooks
+     - WEBHOOK_EVENTS_TAKEN=REGISTER,UPDATE_EMAIL
     ports:
      - 18080:8080
      - 9000:9000
     volumes:
      - ./.container/keycloak/realm-export.json:/opt/keycloak/data/import/realm.json
+     - ./.container/keycloak/providers:/opt/keycloak/providers
     command: start-dev --import-realm
     depends_on:
       elearning.mssql-init:

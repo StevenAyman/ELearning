@@ -54,7 +54,7 @@ public sealed class DiscountCodeConfiguration : IEntityTypeConfiguration<Discoun
             .IsRequired(false);
         });
 
-        builder.Property<uint>("row_version")
+        builder.Property<byte[]>("row_version")
             .IsRowVersion();
     }
 }

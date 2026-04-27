@@ -148,10 +148,10 @@ namespace ELearning.Infastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("last_used_at_utc");
 
-                    b.Property<long>("row_version")
+                    b.Property<byte[]>("row_version")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bigint")
+                        .HasColumnType("rowversion")
                         .HasColumnName("row_version");
 
                     b.HasKey("Id")
@@ -615,7 +615,6 @@ namespace ELearning.Infastructure.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("Bio")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("bio");
@@ -626,10 +625,10 @@ namespace ELearning.Infastructure.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("subject_id");
 
-                    b.Property<long>("row_version")
+                    b.Property<byte[]>("row_version")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bigint")
+                        .HasColumnType("rowversion")
                         .HasColumnName("row_version");
 
                     b.HasKey("Id")
@@ -989,10 +988,10 @@ namespace ELearning.Infastructure.Migrations
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("title");
 
-                    b.Property<long>("row_version")
+                    b.Property<byte[]>("row_version")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bigint")
+                        .HasColumnType("rowversion")
                         .HasColumnName("row_version");
 
                     b.HasKey("Id")
@@ -1216,10 +1215,10 @@ namespace ELearning.Infastructure.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("wallet");
 
-                    b.Property<long>("row_version")
+                    b.Property<byte[]>("row_version")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bigint")
+                        .HasColumnType("rowversion")
                         .HasColumnName("row_version");
 
                     b.HasKey("Id")

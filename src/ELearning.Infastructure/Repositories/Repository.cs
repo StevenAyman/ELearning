@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ELearning.Domain.Shared;
 using ELearning.Domain.Shared.Specifications;
+using ELearning.Domain.Users;
 using ELearning.Infastructure.Specifications;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,6 @@ public class Repository<T>(AppDbContext dbContext) where T : class
 
     public virtual async Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default)
         => await _dbContext.Set<T>().ToListAsync(cancellationToken);
-
     public async Task<T?> GetWithSpecAsync(
         IBaseSpecifications<T> specs, 
         CancellationToken cancellationToken = default)

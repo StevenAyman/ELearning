@@ -58,7 +58,7 @@ public sealed class SessionConfiguration : IEntityTypeConfiguration<Session>
             .HasColumnName("rating_average");
         });
 
-        builder.Property<uint>("row_version")
+        builder.Property<byte[]>("row_version")
             .IsRowVersion();
 
         // Relationships
