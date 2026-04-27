@@ -29,7 +29,7 @@ internal sealed class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavi
         }
         else
         {
-            _logger.LogInformation("Completed request {RequestName} with error {Error}", requestName, result.Error);
+            _logger.LogError("Completed request {RequestName} with error {Error}", requestName, result.Error?.Message);
         }
 
         return result;

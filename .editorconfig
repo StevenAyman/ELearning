@@ -467,7 +467,3 @@ dotnet_style_object_initializer = true:suggestion
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_coalesce_expression = true:suggestion
-
-[*.cs]
-# CA1873: Avoid unnecessary evaluation of arguments for logging
-dotnet_diagnostic.CA1873.severity = warning
