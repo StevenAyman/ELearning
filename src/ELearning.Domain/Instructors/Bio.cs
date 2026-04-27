@@ -5,4 +5,4 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ELearning.Domain.Instructors;
-public sealed record Bio(string Value);
+public sealed record Bio(string? Value);

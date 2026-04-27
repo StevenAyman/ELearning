@@ -23,9 +23,9 @@ public sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
             .HasColumnType("decimal(18,2)")
             .HasConversion(wallet => wallet.Amount, value => new Money(value));
 
-        builder.Property<uint>("row_version")
+        builder.Property<byte[]>("row_version")
             .IsRowVersion();
 
-        
+
     }
 }

@@ -24,7 +24,7 @@ public sealed class InstructorConfiguration : IEntityTypeConfiguration<Instructo
 
         builder.Property(i => i.Bio)
             .HasMaxLength(500)
-            .HasConversion(bio => bio.Value, value => new Bio(value));
+            .HasConversion(bio => bio == null? null : bio.Value, value => new Bio(value));
 
         builder.OwnsOne(i => i.Rating, ratingBuilder =>
         {
@@ -39,7 +39,7 @@ public sealed class InstructorConfiguration : IEntityTypeConfiguration<Instructo
                 .HasColumnName("rating_average");
         });
 
-        builder.Property<uint>("row_version")
+        builder.Property<byte[]>("row_version")
             .IsRowVersion();
 
         builder.Property(i => i.SubjectId)

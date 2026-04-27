@@ -8,8 +8,8 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddPresentation();
-builder.Services.AddInfastructure(builder.Configuration)
-    .AddApplication();
+builder.Services.AddInfastructure(builder.Configuration);
+builder.Services.AddApplication();
 
 
 
