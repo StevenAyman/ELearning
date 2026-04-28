@@ -1,13 +1,16 @@
-﻿using System.Reflection;
-using ELearning.Api.BackgroundJobs;
+﻿using ELearning.Api.BackgroundJobs;
 using ELearning.Api.Exceptions;
 using ELearning.Api.Helpers;
+using ELearning.Api.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -20,15 +23,14 @@ public static class DependencyInjection
 {
     public static WebApplicationBuilder AddPresentation(this WebApplicationBuilder app)
     {
-        app.Services.AddControllers(options =>
-        {
-            options.ReturnHttpNotAcceptable = true;
-            options.RespectBrowserAcceptHeader = true;
-        })
-        .AddXmlSerializerFormatters()
-        .AddNewtonsoftJson();
 
         app.Services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection));
+
+        app.Services.AddTransient<LinkService>();
+
+        app.Services.AddHttpContextAccessor();
+
+        AddControllers(app);
 
         AddProblemDetails(app);
         
@@ -46,6 +48,27 @@ public static class DependencyInjection
         return app;
     }
 
+
+    public static void AddControllers(WebApplicationBuilder app)
+    {
+        app.Services.AddControllers(options =>
+        {
+            options.ReturnHttpNotAcceptable = true;
+            options.RespectBrowserAcceptHeader = true;
+        })
+        .AddXmlSerializerFormatters()
+        .AddNewtonsoftJson(options =>
+        {
+            options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        });
+
+        app.Services.Configure<MvcOptions>(options =>
+        {
+            NewtonsoftJsonOutputFormatter formatter = options.OutputFormatters.OfType<NewtonsoftJsonOutputFormatter>().First();
+
+            formatter.SupportedMediaTypes.Add(CustomMediaTypes.HateoasJson);
+        });
+    }
     public static void AddOpenTelemtery(WebApplicationBuilder app)
     {
         app.Services.AddOpenTelemetry()
@@ -132,7 +155,7 @@ public static class DependencyInjection
             options.AddSecurityDefinition("Keycloak", securityScheme);
             options.AddSecurityRequirement(securityRequirement);
 
-            string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            string xmlFile = $"{typeof(DependencyInjection).Assembly.GetName().Name}.xml";
             string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             options.IncludeXmlComments(xmlPath);
 
