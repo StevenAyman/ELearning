@@ -18,4 +18,9 @@ public sealed class Subject : BaseEntity
 
     public TypeName Name { get; private set; }
 
+    public void UpdateName(TypeName newName)
+    {
+        Name = newName;
+    }
+
 }

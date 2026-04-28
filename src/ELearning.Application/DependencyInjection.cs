@@ -24,6 +24,8 @@ public static class DependencyInjection
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
 
             config.AddOpenBehavior(typeof(QueryCacheBehavior<,>));
+            
+            config.AddOpenBehavior(typeof(CacheInvalidationBehavior<,>));
 
         });
 
