@@ -1,9 +1,10 @@
-﻿using ELearning.Api.DTOs.Users;
+﻿using ELearning.Api.DTOs.Assistants;
+using ELearning.Api.DTOs.Users;
 using FluentValidation;
 
-namespace ELearning.Api.Validators.Users;
+namespace ELearning.Api.Validators.Assistants;
 
-public sealed class CreateAssistantRequestValidator : AbstractValidator<KeycloakUserDto>
+public sealed class CreateAssistantRequestValidator : AbstractValidator<CreateAssistantRequest>
 {
     public CreateAssistantRequestValidator()
     {

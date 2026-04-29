@@ -85,10 +85,20 @@ public class SubjectsController(ISender sender, LinkService linkService) : Contr
     /// <returns>List of each subject with its details</returns>
     [ProducesResponseType<AllDataDto<SubjectDto>>(StatusCodes.Status200OK)]
     [HttpGet]
-    public async Task<ActionResult<AllDataDto<SubjectDto>>> GetAll()
+    public async Task<ActionResult<AllDataDto<SubjectDto>>> GetAll([FromHeader(Name = "Accept")] string accept)
     {
         var query = new GetAllSubjectsQuery();
         var result = await _sender.Send(query);
+        var subjects = result.Value;
+
+        if (accept == CustomMediaTypes.HateoasJson)
+        {
+            foreach (var subject in subjects)
+            {
+                subject.Links = GetLinks(subject.Id);
+            }
+        }
+
         var response = new AllDataDto<SubjectDto>
         {
             Data = result.Value
@@ -168,7 +178,8 @@ public class SubjectsController(ISender sender, LinkService linkService) : Contr
         return [
             _linkService.Create(nameof(Get), "self", HttpMethods.Get, new {Id = id}),
             _linkService.Create(nameof(Update), "update", HttpMethods.Put, new {Id = id}),
-            _linkService.Create(nameof(Delete), "delete", HttpMethods.Delete, new {Id = id})
+            _linkService.Create(nameof(Delete), "delete", HttpMethods.Delete, new {Id = id}),
+            _linkService.Create(nameof(Create), "create", HttpMethods.Post)
             ];
     }
 

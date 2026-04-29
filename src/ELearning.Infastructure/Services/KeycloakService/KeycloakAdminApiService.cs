@@ -182,4 +182,17 @@ public sealed class KeycloakAdminApiService(IKeycloakAdminApi keycloakAdminApi, 
 
         return Result.Success();
     }
+
+    public async Task<Result> DeleteUserAsync(string userId)
+    {
+        var result = await _keycloakAdminApi.DeleteUserAsync(_options.Realm, userId);
+
+        if (!result.IsSuccessful)
+        {
+            _logger.LogInformation("Removing user from keycloak not succeeded with error {Error}", result.Error?.Content);
+            return Result.Failure(new Error(result.StatusCode.ToString(), $"{result.Error?.Content}"));
+        }
+
+        return Result.Success();
+    }
 }

@@ -2,5 +2,5 @@
 
 public sealed class AllDataDto<T>
 {
-    public IReadOnlyList<T> Data { get; init; }
+    public IEnumerable<T> Data { get; init; }
 }

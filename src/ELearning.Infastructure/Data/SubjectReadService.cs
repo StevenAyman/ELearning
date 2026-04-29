@@ -31,7 +31,7 @@ public sealed class SubjectReadService(IDbConnectionFactory dbConnectionFactory)
         return subject;
     }
 
-    public async Task<IReadOnlyList<SubjectDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<SubjectDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         using var connection = _dbConnectionFactory.CreateConnection();
         var sql = """

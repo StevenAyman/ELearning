@@ -13,7 +13,8 @@ public sealed record CreateAssistantCommand(
     Email Email,
     string DateOfBirth,
     string City,
-    string IdentityId) : ICommand;
+    string IdentityId,
+    string InstructorId) : ICommand;
 
 
 

@@ -10,14 +10,14 @@ using ELearning.Domain.Shared;
 
 namespace ELearning.Application.Subjects.GetAllSubjects;
 internal sealed class GetAllSubjectsQueryHandler(
-    ISubjectReadService subjectReadService) : IQueryHandler<GetAllSubjectsQuery, IReadOnlyList<SubjectDto>>
+    ISubjectReadService subjectReadService) : IQueryHandler<GetAllSubjectsQuery, IEnumerable<SubjectDto>>
 {
     private readonly ISubjectReadService _subjectReadService = subjectReadService;
 
-    public async Task<Result<IReadOnlyList<SubjectDto>>> Handle(GetAllSubjectsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<SubjectDto>>> Handle(GetAllSubjectsQuery request, CancellationToken cancellationToken)
     {
         var subjects = await _subjectReadService.GetAllAsync(cancellationToken);
 
-        return Result<IReadOnlyList<SubjectDto>>.Succuss(subjects);
+        return Result<IEnumerable<SubjectDto>>.Succuss(subjects);
     }
 }

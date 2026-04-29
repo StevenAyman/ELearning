@@ -11,6 +11,6 @@ public sealed class SubjectWithInstructorsDto
 {
     public string Id { get; init; }
     public string Name { get; init; }
-    public IReadOnlyList<InstructorDto> Instructors { get; init; }
+    public IEnumerable<InstructorDto> Instructors { get; init; }
     public LinkDto[]? Links { get; set; }
 }
