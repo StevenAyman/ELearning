@@ -12,14 +12,60 @@ public sealed class InstructorReadService(IDbConnectionFactory dbConnectionFacto
 {
     private readonly IDbConnectionFactory _dbConnectionFactory = dbConnectionFactory;
 
-    public async Task<IReadOnlyList<InstructorDto>> GetWithSubjectIdAsync(string subjectId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<InstructorDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        using var connection = _dbConnectionFactory.CreateConnection();
+
+        var sql = """
+            Select
+            u.id As Id,
+            u.first_name + ' ' + u.last_name As Name,
+            i.rating_average As Rating,
+            i.rating_count As RatingCount
+            From users u inner join instructors i
+            On u.id = i.id
+            """;
+
+        var instructors = await connection.QueryAsync<InstructorDto>(new CommandDefinition(
+            sql,
+            cancellationToken: cancellationToken));
+
+        return instructors is null ? [] : instructors.ToList();
+    }
+
+    public async Task<InstructorWithSessionsDto?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        using var connection = _dbConnectionFactory.CreateConnection();
+        var sql = """
+            Select
+            i.id As Id,
+            u.first_name + ' ' + u.last_name As Name,
+            i.bio As Bio,
+            i.rating_average As Rating,
+            i.rating_count As RatingCount
+            From instructors i join users u
+            On u.id = i.id
+            Where i.id = @Id
+            """;
+
+        var instructor = await connection.QueryFirstOrDefaultAsync<InstructorWithSessionsDto>(new CommandDefinition(
+            sql,
+            new { Id = id },
+            cancellationToken: cancellationToken));
+
+        return instructor;
+    }
+
+    public async Task<IEnumerable<InstructorDto>> GetWithSubjectIdAsync(string subjectId, CancellationToken cancellationToken = default)
     {
         using var connection = _dbConnectionFactory.CreateConnection();
 
         var sql = """
             Select
             i.id As Id,
-            u.first_name + ' ' + u.last_name As Name
+            u.first_name + ' ' + u.last_name As Name,
+            i.rating_average As Rating,
+            i.rating_count As RatingCount
             From users u inner join instructors i
             On u.id = i.id
             Where i.subject_id = @SubjectId

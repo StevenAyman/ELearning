@@ -41,4 +41,7 @@ public interface IKeycloakAdminApi
     [Put("/admin/realms/{realm}/users/{userId}")]
     Task<IApiResponse> UpdateProfileAsync(string realm, string userId, [Body] KeycloakUserProfileDto keycloakUserProfileDto);
 
+    [Delete("/admin/realms/{realm}/users/{userId}")]
+    Task<IApiResponse> DeleteUserAsync(string realm, string userId);
+
 }

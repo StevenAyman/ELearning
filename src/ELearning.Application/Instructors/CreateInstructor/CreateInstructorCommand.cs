@@ -13,4 +13,5 @@ public sealed record CreateInstructorCommand(
     Email Email,
     string DateOfBirth,
     string City,
-    string IdentityId) : ICommand;
+    string IdentityId,
+    string SubjectId) : ICommand;

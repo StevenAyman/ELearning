@@ -1,6 +1,8 @@
 ﻿using System.Text.Json;
 using System.Threading.Tasks;
 using ELearning.Api.BackgroundJobs;
+using ELearning.Api.DTOs.Assistants;
+using ELearning.Api.DTOs.Instructors;
 using ELearning.Api.DTOs.Users;
 using ELearning.Api.Mappings.Assistants;
 using ELearning.Api.Mappings.Instructors;
@@ -28,19 +30,16 @@ namespace ELearning.Api.Controllers.Authentication;
 /// <param name="keycloakAdminApiService">Service that allow use deal with keycloak APIs</param>
 /// <param name="sender">Used to executed handler related to command or query</param>
 /// <param name="userProfileValidator">Validator for model</param>
-/// <param name="keycloakUserDtoValidator">Validator for model</param>
 [Route("api/keycloak")]
 [ApiController]
 [Produces("application/json")]
 public class AuthController(ILogger<AuthController> logger, KeycloakAdminApiService keycloakAdminApiService, ISender sender,
-    IValidator<UserProfileDto> userProfileValidator,
-    IValidator<KeycloakUserDto> keycloakUserDtoValidator) : ControllerBase
+    IValidator<UserProfileDto> userProfileValidator) : ControllerBase
 {
     private readonly ILogger<AuthController> _logger = logger;
     private readonly KeycloakAdminApiService _keycloakAdminApiService = keycloakAdminApiService;
     private readonly ISender _sender = sender;
     private readonly IValidator<UserProfileDto> _userProfileValidator = userProfileValidator;
-    private readonly IValidator<KeycloakUserDto> _keycloakUserDtoValidator = keycloakUserDtoValidator;
 
     /// <summary>
     /// Webhook endpoint called by keycloak in case of two events (register and email update)
@@ -67,17 +66,18 @@ public class AuthController(ILogger<AuthController> logger, KeycloakAdminApiServ
 
         return Ok();
     }
+
     /// <summary>
     /// Creates instructor in keycloak and record it in database
     /// </summary>
     /// <param name="userDto">The user required details for registeration</param>
+    /// <param name="keycloakUserDtoValidator">Instructor data validator</param>
     /// <returns></returns>
     /// <exception cref="Application.Exceptions.ValidationException">Exception thrown in case of invalid model param</exception>
-
     [HttpPost("instructor/create")]
-    public async Task<IActionResult> CreateInstructor(KeycloakUserDto userDto)
+    public async Task<IActionResult> CreateInstructor(CreateInstructorRequest userDto, IValidator<CreateInstructorRequest> keycloakUserDtoValidator)
     {
-        var failures = await _keycloakUserDtoValidator.ValidateAsync(userDto);
+        var failures = await keycloakUserDtoValidator.ValidateAsync(userDto);
         if (!failures.IsValid)
         {
             var errors = failures.Errors.Select(e => new ValidationError(e.PropertyName, e.ErrorMessage)).ToList();
@@ -115,13 +115,14 @@ public class AuthController(ILogger<AuthController> logger, KeycloakAdminApiServ
     /// Creates assistant in keycloak and record it in database
     /// </summary>
     /// <param name="userDto">The user required details for registeration</param>
+    /// <param name="keycloakUserDtoValidator">Assistant data validator</param>
     /// <returns></returns>
     /// <exception cref="Application.Exceptions.ValidationException">Exception thrown in case of invalid model param</exception>
 
     [HttpPost("assistant/create")]
-    public async Task<IActionResult> CreateAssistant(KeycloakUserDto userDto)
+    public async Task<IActionResult> CreateAssistant(CreateAssistantRequest userDto, IValidator<CreateAssistantRequest> keycloakUserDtoValidator)
     {
-        var failures = await _keycloakUserDtoValidator.ValidateAsync(userDto);
+        var failures = await keycloakUserDtoValidator.ValidateAsync(userDto);
         if (!failures.IsValid)
         {
             var errors = failures.Errors.Select(e => new ValidationError(e.PropertyName, e.ErrorMessage)).ToList();

@@ -7,7 +7,7 @@ using ELearning.Application.Abstractions.Cache;
 using ELearning.Application.Subjects.GetSubject;
 
 namespace ELearning.Application.Subjects.GetAllSubjects;
-public sealed record GetAllSubjectsQuery() : ICachedQuery<IReadOnlyList<SubjectDto>>
+public sealed record GetAllSubjectsQuery() : ICachedQuery<IEnumerable<SubjectDto>>
 {
     public string CacheKey => $"subjects";
 

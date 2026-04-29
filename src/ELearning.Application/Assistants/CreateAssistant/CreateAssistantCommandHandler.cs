@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ELearning.Application.Abstractions.Clock;
+using ELearning.Application.Abstractions.Data;
 using ELearning.Application.Abstractions.Messaging;
 using ELearning.Domain.Assistants;
 using ELearning.Domain.Shared;
@@ -17,13 +18,16 @@ internal sealed class CreateAssistantCommandHandler(
     IUserRepository<User> userRepository,
     IUserRepository<Assistant> assistantRepository,
     IDateTimeProvider dateTimeProvider,
-    ILogger<CreateAssistantCommandHandler> logger) : ICommandHandler<CreateAssistantCommand>
+    ILogger<CreateAssistantCommandHandler> logger,
+    IInstructorReadService instructorReadService) : ICommandHandler<CreateAssistantCommand>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IUserRepository<User> _userRepository = userRepository;
     private readonly IUserRepository<Assistant> _instructorRepository = assistantRepository;
     private readonly IDateTimeProvider _dateTimeProvider = dateTimeProvider;
     private readonly ILogger<CreateAssistantCommandHandler> _logger = logger;
+    private readonly IInstructorReadService _instructorReadService = instructorReadService;
+
     public async Task<Result> Handle(CreateAssistantCommand request, CancellationToken cancellationToken)
     {
         var id = $"in_{Guid.CreateVersion7()}";
@@ -43,7 +47,14 @@ internal sealed class CreateAssistantCommandHandler(
             _dateTimeProvider.UtcNow,
             request.IdentityId);
 
-        var assistant = new Assistant(id, "");
+        var instructor = await _instructorReadService.GetByIdAsync(request.InstructorId, cancellationToken);
+
+        if (instructor is null)
+        {
+            return Result.Failure(UserErrors.UserNotExist);
+        }
+
+        var assistant = new Assistant(id, instructor.Id);
 
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
 

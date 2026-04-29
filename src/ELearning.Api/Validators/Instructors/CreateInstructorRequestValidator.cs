@@ -1,11 +1,12 @@
-﻿using ELearning.Api.DTOs.Users;
+﻿using ELearning.Api.DTOs.Instructors;
+using ELearning.Api.DTOs.Users;
 using FluentValidation;
 
-namespace ELearning.Api.Validators.Users;
+namespace ELearning.Api.Validators.Instructors;
 
-public sealed class CreateAssistantRequestValidator : AbstractValidator<KeycloakUserDto>
+public sealed class CreateInstructorRequestValidator : AbstractValidator<CreateInstructorRequest>
 {
-    public CreateAssistantRequestValidator()
+    public CreateInstructorRequestValidator()
     {
         RuleFor(u => u.Email)
             .EmailAddress()

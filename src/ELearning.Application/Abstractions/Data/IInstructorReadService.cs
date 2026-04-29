@@ -8,5 +8,7 @@ using ELearning.Application.Instructors.DTOs;
 namespace ELearning.Application.Abstractions.Data;
 public interface IInstructorReadService
 {
-    Task<IReadOnlyList<InstructorDto>> GetWithSubjectIdAsync(string subjectId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<InstructorDto>> GetWithSubjectIdAsync(string subjectId, CancellationToken cancellationToken = default);
+    Task<InstructorWithSessionsDto?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<InstructorDto>> GetAllAsync(CancellationToken cancellationToken = default);
 }

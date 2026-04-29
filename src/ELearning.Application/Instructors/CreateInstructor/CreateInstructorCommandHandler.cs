@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ELearning.Application.Abstractions.Clock;
+using ELearning.Application.Abstractions.Data;
 using ELearning.Application.Abstractions.Messaging;
 using ELearning.Domain.Shared;
+using ELearning.Domain.Subjects;
 using ELearning.Domain.Users;
 using Microsoft.Extensions.Logging;
 
@@ -16,13 +18,15 @@ internal sealed class CreateInstructorCommandHandler(
     IUserRepository<User> userRepository,
     IUserRepository<Domain.Instructors.Instructor> instructorRepository,
     IDateTimeProvider dateTimeProvider,
-    ILogger<CreateInstructorCommandHandler> logger) : ICommandHandler<CreateInstructorCommand>
+    ILogger<CreateInstructorCommandHandler> logger,
+    ISubjectReadService subjectReadService) : ICommandHandler<CreateInstructorCommand>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IUserRepository<User> _userRepository = userRepository;
     private readonly IUserRepository<Domain.Instructors.Instructor> _instructorRepository = instructorRepository;
     private readonly IDateTimeProvider _dateTimeProvider = dateTimeProvider;
     private readonly ILogger<CreateInstructorCommandHandler> _logger = logger;
+    private readonly ISubjectReadService _subjectReadService = subjectReadService;
 
     public async Task<Result> Handle(CreateInstructorCommand request, CancellationToken cancellationToken)
     {
@@ -43,7 +47,14 @@ internal sealed class CreateInstructorCommandHandler(
             _dateTimeProvider.UtcNow,
             request.IdentityId);
 
-        var instructor = new Domain.Instructors.Instructor(id, null, "");
+        var subject = await _subjectReadService.GetByIdAsync(request.SubjectId, cancellationToken);
+
+        if (subject is null)
+        {
+            return Result.Failure(SubjectErrors.NotFound);
+        }
+
+        var instructor = new Domain.Instructors.Instructor(id, null, subject.Id);
 
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
@@ -53,6 +64,7 @@ internal sealed class CreateInstructorCommandHandler(
             _instructorRepository.Add(instructor);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.CommitTransactionAsync(cancellationToken);
         }
         catch(Exception ex)
         {
