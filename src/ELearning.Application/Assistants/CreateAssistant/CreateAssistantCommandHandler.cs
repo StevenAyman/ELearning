@@ -30,7 +30,7 @@ internal sealed class CreateAssistantCommandHandler(
 
     public async Task<Result> Handle(CreateAssistantCommand request, CancellationToken cancellationToken)
     {
-        var id = $"in_{Guid.CreateVersion7()}";
+        var id = $"as_{Guid.CreateVersion7()}";
         var isParsed = DateOnly.TryParse(request.DateOfBirth, new CultureInfo("zh-CN"), out var date);
         if (!isParsed)
         {
@@ -64,6 +64,7 @@ internal sealed class CreateAssistantCommandHandler(
             _instructorRepository.Add(assistant);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.CommitTransactionAsync(cancellationToken);
         }
         catch (Exception ex)
         {

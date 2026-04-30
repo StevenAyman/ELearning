@@ -83,7 +83,7 @@ public class InstructorsController(ISender sender, LinkService linkService) : Co
     [ProducesResponseType<AllDataDto<InstructorDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpGet]
-    public async Task<ActionResult<AllDataDto<InstructorDto>>> GetAllInstructors([FromHeader(Name = "accept")] string accept)
+    public async Task<ActionResult<AllDataDto<InstructorDto>>> GetAllInstructors([FromHeader(Name = "Accept")] string accept)
     {
         var query = new GetAllInstructorsQuery();
         var instructors = await _sender.Send(query);

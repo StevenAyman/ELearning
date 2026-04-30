@@ -18,5 +18,10 @@ public sealed class Assistant : BaseEntity
 
     public string InstructorId { get; private set; }
 
+    public void UpdateInstructor(string instructorId)
+    {
+        InstructorId = instructorId;
+    }
+
 
 }
