@@ -18,15 +18,13 @@ internal sealed class CreateInstructorCommandHandler(
     IUserRepository<User> userRepository,
     IUserRepository<Domain.Instructors.Instructor> instructorRepository,
     IDateTimeProvider dateTimeProvider,
-    ILogger<CreateInstructorCommandHandler> logger,
-    ISubjectReadService subjectReadService) : ICommandHandler<CreateInstructorCommand>
+    ILogger<CreateInstructorCommandHandler> logger) : ICommandHandler<CreateInstructorCommand>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IUserRepository<User> _userRepository = userRepository;
     private readonly IUserRepository<Domain.Instructors.Instructor> _instructorRepository = instructorRepository;
     private readonly IDateTimeProvider _dateTimeProvider = dateTimeProvider;
     private readonly ILogger<CreateInstructorCommandHandler> _logger = logger;
-    private readonly ISubjectReadService _subjectReadService = subjectReadService;
 
     public async Task<Result> Handle(CreateInstructorCommand request, CancellationToken cancellationToken)
     {
@@ -47,14 +45,7 @@ internal sealed class CreateInstructorCommandHandler(
             _dateTimeProvider.UtcNow,
             request.IdentityId);
 
-        var subject = await _subjectReadService.GetByIdAsync(request.SubjectId, cancellationToken);
-
-        if (subject is null)
-        {
-            return Result.Failure(SubjectErrors.NotFound);
-        }
-
-        var instructor = new Domain.Instructors.Instructor(id, null, subject.Id);
+        var instructor = new Domain.Instructors.Instructor(id, null);
 
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
 

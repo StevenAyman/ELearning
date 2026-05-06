@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ELearning.Application.Abstractions.Clock;
+using ELearning.Application.Abstractions.Data;
 using ELearning.Application.Abstractions.Messaging;
 using ELearning.Application.Instructors.CreateInstructor;
 using ELearning.Domain.Shared;
@@ -16,12 +17,15 @@ internal sealed class CreateInstructorCommandHandler(
     IUnitOfWork unitOfWork,
     IUserRepository<User> userRepository,
     IUserRepository<Student> studentRespository,
-    IDateTimeProvider dateTimeProvider) : ICommandHandler<RegisterStudentCommand>
+    IDateTimeProvider dateTimeProvider,
+    IClassReadService classReadService) : ICommandHandler<RegisterStudentCommand>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IUserRepository<User> _userRepository = userRepository;
     private readonly IUserRepository<Student> _studentRepository = studentRespository;
     private readonly IDateTimeProvider _datetimeProvider = dateTimeProvider;
+    private readonly IClassReadService _classReadService = classReadService;
+
     public async Task<Result> Handle(RegisterStudentCommand request, CancellationToken cancellationToken)
     {
         var id = $"st_{Guid.CreateVersion7()}";
@@ -36,7 +40,10 @@ internal sealed class CreateInstructorCommandHandler(
             _datetimeProvider.UtcNow,
             request.IdentityId);
 
-        var student = new Student(id);
+        var studentClass = await _classReadService.GetByNameAsync(request.Class, cancellationToken);
+
+
+        var student = new Student(id, studentClass is null? null : studentClass.Id);
 
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try

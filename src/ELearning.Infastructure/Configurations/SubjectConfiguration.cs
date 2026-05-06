@@ -24,10 +24,5 @@ public sealed class SubjectConfiguration : IEntityTypeConfiguration<Subject>
             .HasMaxLength(50)
             .HasConversion(name => name.Value, value => new TypeName(value));
 
-        // Relationships
-        builder.HasMany<Instructor>()
-            .WithOne()
-            .HasForeignKey(i => i.SubjectId)
-            .OnDelete(DeleteBehavior.NoAction);
     }
 }

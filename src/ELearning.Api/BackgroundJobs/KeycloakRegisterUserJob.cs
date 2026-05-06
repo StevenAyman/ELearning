@@ -23,12 +23,18 @@ public sealed class KeycloakRegisterUserJob(KeycloakAdminApiService keycloakAdmi
 
         await _keycloakAdminApiService.AssignRoleForUser(userId, "student");
 
+        if (userInfo.Attirbutes.Class is null)
+        {
+            return;
+        }
+
         var userCommand = new RegisterStudentCommand(new FirstName(userInfo.FirstName),
             new LastName(userInfo.LastName),
             new Email(userInfo.Email),
             userInfo.Attirbutes.DateOfBirth,
             userInfo.Attirbutes.City,
-            userInfo.Id);
+            userInfo.Id,
+            userInfo.Attirbutes.Class);
         var result = await _sender.Send(userCommand);
 
         if (result.IsFailure)

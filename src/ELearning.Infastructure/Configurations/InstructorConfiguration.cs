@@ -42,12 +42,6 @@ public sealed class InstructorConfiguration : IEntityTypeConfiguration<Instructo
         builder.Property<byte[]>("row_version")
             .IsRowVersion();
 
-        builder.Property(i => i.SubjectId)
-            .HasMaxLength(50)
-            .IsRequired();
-
-        builder.HasIndex(i => i.SubjectId);
-
         // Relationships
         builder.HasMany<Assistant>()
             .WithOne()

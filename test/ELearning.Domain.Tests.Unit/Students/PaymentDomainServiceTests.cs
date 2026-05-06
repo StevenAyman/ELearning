@@ -25,7 +25,7 @@ public sealed class PaymentDomainServiceTests
     {
         // Arrange
         var id = $"p_{Guid.CreateVersion7()}";
-        var student = new Student($"");
+        var student = new Student($"", "");
         var session = new Session(
             "",
             new Title(""), 
@@ -34,6 +34,7 @@ public sealed class PaymentDomainServiceTests
             SessionStatus.Draft, 
             DateTime.UtcNow, 
             "", 
+            "",
             "");
         var purchasedSessions = new List<Purchase>();
         var utcNow = DateTime.UtcNow;
@@ -52,7 +53,7 @@ public sealed class PaymentDomainServiceTests
     {
         // Arrange
         var id = $"p_{Guid.CreateVersion7()}";
-        var student = new Student($"");
+        var student = new Student($"", "");
         var purchasedSessions = new List<Purchase>();
         var utcNow = DateTime.UtcNow;
 
@@ -78,7 +79,7 @@ public sealed class PaymentDomainServiceTests
         SessionStatus.Draft,
         DateTime.UtcNow,
         "",
-        "");
+        "", "");
         var purchasedSessions = new List<Purchase>();
         var utcNow = DateTime.UtcNow;
 
@@ -96,7 +97,7 @@ public sealed class PaymentDomainServiceTests
     {
         // Arrange
         var id = $"p_{Guid.CreateVersion7()}";
-        var student = new Student($"");
+        var student = new Student($"", "");
         var session = new Session(
         "",
         new Title(""),
@@ -105,7 +106,7 @@ public sealed class PaymentDomainServiceTests
         SessionStatus.Draft,
         DateTime.UtcNow,
         "",
-        "");
+        "", "");
         var utcNow = DateTime.UtcNow;
 
         // Act
@@ -122,7 +123,7 @@ public sealed class PaymentDomainServiceTests
     {
         // Arrange
         var id = $"p_{Guid.CreateVersion7()}";
-        var student = new Student($"");
+        var student = new Student($"", "");
         var session = new Session(
         "1",
         new Title(""),
@@ -131,7 +132,7 @@ public sealed class PaymentDomainServiceTests
         SessionStatus.Draft,
         DateTime.UtcNow,
         "",
-        "");
+        "", "");
         var utcNow = DateTime.UtcNow;
         var studentPurchases = new List<Purchase>() { Purchase.CreateSessionPurchase("", "", "1", utcNow) };
 
@@ -149,7 +150,7 @@ public sealed class PaymentDomainServiceTests
     {
         // Arrange
         var id = $"p_{Guid.CreateVersion7()}";
-        var student = new Student($"");
+        var student = new Student($"", "");
         var session = new Session(
             "",
             new Title(""),
@@ -158,7 +159,7 @@ public sealed class PaymentDomainServiceTests
             SessionStatus.Draft,
             DateTime.UtcNow,
             "",
-            "");
+            "", "");
         var purchasedSessions = new List<Purchase>();
         var utcNow = DateTime.UtcNow;
 
@@ -183,7 +184,7 @@ public sealed class PaymentDomainServiceTests
         SessionStatus.Draft,
         DateTime.UtcNow,
         "",
-        "");
+        "", "");
 
         // Act
         var result = _sut.CalculateTotalPurchaseAmount(session, null);
@@ -219,7 +220,7 @@ public sealed class PaymentDomainServiceTests
         SessionStatus.Draft,
         DateTime.UtcNow,
         "",
-        "");
+        "", "");
         var discountCode = DiscountCode.DiscountCodeBuilder.CreateBuilder()
             .SetId("Anything")
             .WithCode("Anything")
@@ -251,7 +252,7 @@ public sealed class PaymentDomainServiceTests
         SessionStatus.Draft,
         DateTime.UtcNow,
         "",
-        "");
+        "", "");
         var discountAmount = new Money(50);
         var discountCode = DiscountCode.DiscountCodeBuilder.CreateBuilder()
             .SetId("Anything")
@@ -282,7 +283,7 @@ public sealed class PaymentDomainServiceTests
         SessionStatus.Draft,
         DateTime.UtcNow,
         "",
-        "");
+        "", "");
         var discountAmount = new Money(0.5m);
         var discountCode = DiscountCode.DiscountCodeBuilder.CreateBuilder()
             .SetId("Anything")
@@ -313,7 +314,7 @@ public sealed class PaymentDomainServiceTests
         SessionStatus.Draft,
         DateTime.UtcNow,
         "",
-        "");
+        "", "");
         var discountAmount = new Money(70);
         var discountCode = DiscountCode.DiscountCodeBuilder.CreateBuilder()
             .SetId("Anything")

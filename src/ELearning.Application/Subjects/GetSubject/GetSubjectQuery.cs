@@ -8,7 +8,7 @@ using ELearning.Application.Abstractions.Messaging;
 using ELearning.Application.Subjects.DTOs;
 
 namespace ELearning.Application.Subjects.GetSubject;
-public sealed record GetSubjectQuery(string Id) : ICachedQuery<SubjectWithInstructorsDto>
+public sealed record GetSubjectQuery(string Id) : ICachedQuery<SubjectResponse>
 {
     public string CacheKey => $"subject:{Id}";
 

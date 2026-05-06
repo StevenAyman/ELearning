@@ -7,4 +7,4 @@ using ELearning.Application.Abstractions.Messaging;
 using ELearning.Application.Instructors.DTOs;
 
 namespace ELearning.Application.Instructors.GetAllInstructors;
-public sealed record GetAllInstructorsQuery() : IQuery<IEnumerable<InstructorDto>>;
+public sealed record GetAllInstructorsQuery(string? ClassId, string? SubjectId) : IQuery<IEnumerable<InstructorDto>>;

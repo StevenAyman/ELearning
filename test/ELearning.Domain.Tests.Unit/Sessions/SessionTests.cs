@@ -22,7 +22,7 @@ public sealed class SessionTests
             SessionStatus.Draft,
             DateTime.UtcNow,
             $"i_{Guid.CreateVersion7()}",
-            $"s_{Guid.CreateVersion7()}");
+            $"s_{Guid.CreateVersion7()}", "");
     }
 
     [Fact]

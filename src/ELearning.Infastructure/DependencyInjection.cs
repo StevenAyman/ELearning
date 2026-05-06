@@ -9,9 +9,11 @@ using Dapper;
 using ELearning.Application.Abstractions.Cache;
 using ELearning.Application.Abstractions.Clock;
 using ELearning.Application.Abstractions.Data;
+using ELearning.Domain.Classes;
 using ELearning.Domain.Discounts;
 using ELearning.Domain.Enrollments;
 using ELearning.Domain.Exams;
+using ELearning.Domain.Instructors;
 using ELearning.Domain.Purchases;
 using ELearning.Domain.Ratings;
 using ELearning.Domain.Reviews;
@@ -117,7 +119,9 @@ public static class DependencyInjection
         services.AddScoped<ICodeAreasRepository, CodeAreasRepository>();
         services.AddScoped<IDiscountCodeRepository, DiscountCodeRepository>();
         services.AddScoped<IPermissionService, PermissionService>();
+        services.AddScoped<ILearningClassRepository, LearningClassRepository>();
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AppDbContext>());
+        services.AddScoped<IInstructorSubjectRepository, InstructorSubjectRepository>();
         // Repositories End
 
         // Read Services Start
@@ -126,6 +130,7 @@ public static class DependencyInjection
         services.AddScoped<IInstructorReadService, InstructorReadService>();
         services.AddScoped<ISessionReadService, SessionReadService>();
         services.AddScoped<IAssistantReadService, AssistantReadService>();
+        services.AddScoped<IClassReadService,  ClassReadService>();
         // Read Services End
     }
 

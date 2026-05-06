@@ -16,7 +16,8 @@ public sealed class KeycloakAttributesConverter : JsonConverter<KeycloakUserAtti
         return new KeycloakUserAttirbutes
         {
             City = dict?.GetValueOrDefault("city")?[0] ?? "",
-            DateOfBirth = dict?.GetValueOrDefault("date_of_birth")?[0] ?? ""
+            DateOfBirth = dict?.GetValueOrDefault("date_of_birth")?[0] ?? "",
+            Class = dict?.GetValueOrDefault("class")?[0] ?? string.Empty
         };
     }
 

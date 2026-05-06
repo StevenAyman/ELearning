@@ -173,7 +173,7 @@ public sealed class DiscountDomainServiceTests
             SessionStatus.Draft, 
             DateTime.UtcNow,
             "2",
-            "1");
+            "1", "");
 
         var discountCode = DiscountCode.DiscountCodeBuilder.CreateBuilder()
             .SetId("11")
@@ -206,7 +206,7 @@ public sealed class DiscountDomainServiceTests
             SessionStatus.Draft,
             DateTime.UtcNow,
             "2",
-            "1");
+            "1", "");
 
         var discountCode = DiscountCode.DiscountCodeBuilder.CreateBuilder()
             .SetId("11")
@@ -248,7 +248,7 @@ public sealed class DiscountDomainServiceTests
             SessionStatus.Draft,
             DateTime.UtcNow,
             "2",
-            "1");
+            "1", "");
 
         var discountCode = DiscountCode.DiscountCodeBuilder.CreateBuilder()
             .SetId("11")
@@ -290,7 +290,7 @@ public sealed class DiscountDomainServiceTests
             SessionStatus.Draft,
             DateTime.UtcNow,
             "2",
-            "1");
+            "1", "");
 
         var discountCode = DiscountCode.DiscountCodeBuilder.CreateBuilder()
             .SetId("11")
