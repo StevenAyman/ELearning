@@ -12,15 +12,12 @@ public sealed class Instructor : BaseEntity
     private Instructor() { }
     public Instructor(
         string id,
-        Bio? bio,
-        string subjectId) : base(id)
+        Bio? bio) : base(id)
     {
         Bio = bio;
-        SubjectId = subjectId;
     }
     public Bio? Bio { get; private set; }
     public RatingSummary Rating { get; private set; } = new RatingSummary(0, 0);
-    public string SubjectId { get; private set; }
 
     public void UpdateBio(Bio bio)
     {

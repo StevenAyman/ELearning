@@ -16,8 +16,7 @@ public sealed class InstructorTests
     public InstructorTests()
     {
         _sut = new Instructor(Guid.NewGuid().ToString(),
-            new Bio("This is a valid bio for instructor"),
-            $"s_{Guid.CreateVersion7()}");
+            new Bio("This is a valid bio for instructor"));
     }
 
     [Fact]

@@ -11,10 +11,12 @@ public sealed class Student : BaseEntity
 {
     private Student() { }
 
-    public Student(string id) : base(id)
+    public Student(string id, string? classId) : base(id)
     {
         Wallet = Money.Zero();
+        ClassId = classId;
     }
 
     public Money Wallet { get; private set; }
+    public string? ClassId { get; private set; }
 }

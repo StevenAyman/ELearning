@@ -13,4 +13,5 @@ public sealed record RegisterStudentCommand(
     Email Email,
     string DateOfBirth,
     string City,
-    string IdentityId) : ICommand;
+    string IdentityId,
+    string Class) : ICommand;

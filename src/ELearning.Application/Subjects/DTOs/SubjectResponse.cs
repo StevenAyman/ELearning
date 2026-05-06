@@ -7,10 +7,9 @@ using ELearning.Api.DTOs.Shared;
 using ELearning.Application.Instructors.DTOs;
 
 namespace ELearning.Application.Subjects.DTOs;
-public sealed class SubjectWithInstructorsDto
+public sealed class SubjectResponse
 {
     public string Id { get; init; }
     public string Name { get; init; }
-    public IEnumerable<InstructorDto> Instructors { get; init; }
     public LinkDto[]? Links { get; set; }
 }

@@ -11,4 +11,5 @@ public sealed class KeycloakUserAttirbutes
     public string City { get; init; }
 
     public string DateOfBirth { get; init; }
+    public string? Class { get; init; }
 }

@@ -9,5 +9,4 @@ public class CreateInstructorRequest
     public string Email { get; init; }
     public string BirthDate { get; init; }
     public string City { get; init; }
-    public string SubjectId { get; init; }
 }

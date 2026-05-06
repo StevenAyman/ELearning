@@ -44,6 +44,76 @@ namespace ELearning.Infastructure.Migrations
                     b.ToTable("assistants", (string)null);
                 });
 
+            modelBuilder.Entity("ELearning.Domain.Classes.ClassesSubject", b =>
+                {
+                    b.Property<string>("SubjectId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("subject_id");
+
+                    b.Property<string>("ClassId")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("class_id");
+
+                    b.HasKey("SubjectId", "ClassId")
+                        .HasName("pk_classes_subjects");
+
+                    b.HasIndex("ClassId")
+                        .HasDatabaseName("ix_classes_subjects_class_id");
+
+                    b.ToTable("classes_subjects", (string)null);
+                });
+
+            modelBuilder.Entity("ELearning.Domain.Classes.ClassesSubjectsInstructor", b =>
+                {
+                    b.Property<string>("SubjectId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("subject_id");
+
+                    b.Property<string>("InstructorId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("instructor_id");
+
+                    b.Property<string>("ClassId")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("class_id");
+
+                    b.HasKey("SubjectId", "InstructorId", "ClassId")
+                        .HasName("pk_classes_subjects_instructors");
+
+                    b.HasIndex("ClassId")
+                        .HasDatabaseName("ix_classes_subjects_instructors_class_id");
+
+                    b.HasIndex("InstructorId")
+                        .HasDatabaseName("ix_classes_subjects_instructors_instructor_id");
+
+                    b.ToTable("classes_subjects_instructors", (string)null);
+                });
+
+            modelBuilder.Entity("ELearning.Domain.Classes.LearningClass", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_learning_class");
+
+                    b.HasIndex("Type")
+                        .IsUnique()
+                        .HasDatabaseName("ix_learning_class_type");
+
+                    b.ToTable("learning_class", (string)null);
+                });
+
             modelBuilder.Entity("ELearning.Domain.Discounts.CodeApplicableArea", b =>
                 {
                     b.Property<int>("Id")
@@ -619,12 +689,6 @@ namespace ELearning.Infastructure.Migrations
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("bio");
 
-                    b.Property<string>("SubjectId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("subject_id");
-
                     b.Property<byte[]>("row_version")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -633,9 +697,6 @@ namespace ELearning.Infastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_instructors");
-
-                    b.HasIndex("SubjectId")
-                        .HasDatabaseName("ix_instructors_subject_id");
 
                     b.ToTable("instructors", (string)null);
                 });
@@ -940,6 +1001,11 @@ namespace ELearning.Infastructure.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("id");
 
+                    b.Property<string>("ClassId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("class_id");
+
                     b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("datetime2")
                         .HasColumnName("created_on_utc");
@@ -1211,6 +1277,10 @@ namespace ELearning.Infastructure.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("id");
 
+                    b.Property<string>("ClassId")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("class_id");
+
                     b.Property<decimal>("Wallet")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("wallet");
@@ -1223,6 +1293,9 @@ namespace ELearning.Infastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_students");
+
+                    b.HasIndex("ClassId")
+                        .HasDatabaseName("ix_students_class_id");
 
                     b.ToTable("students", (string)null);
                 });
@@ -1424,6 +1497,47 @@ namespace ELearning.Infastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("fk_assistants_instructors_instructor_id");
+                });
+
+            modelBuilder.Entity("ELearning.Domain.Classes.ClassesSubject", b =>
+                {
+                    b.HasOne("ELearning.Domain.Classes.LearningClass", null)
+                        .WithMany()
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_classes_subjects_learning_class_class_id");
+
+                    b.HasOne("ELearning.Domain.Subjects.Subject", null)
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_classes_subjects_subject_subject_id");
+                });
+
+            modelBuilder.Entity("ELearning.Domain.Classes.ClassesSubjectsInstructor", b =>
+                {
+                    b.HasOne("ELearning.Domain.Classes.LearningClass", null)
+                        .WithMany()
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_classes_subjects_instructors_learning_class_class_id");
+
+                    b.HasOne("ELearning.Domain.Instructors.Instructor", null)
+                        .WithMany()
+                        .HasForeignKey("InstructorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_classes_subjects_instructors_instructor_instructor_id");
+
+                    b.HasOne("ELearning.Domain.Subjects.Subject", null)
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_classes_subjects_instructors_subject_subject_id");
                 });
 
             modelBuilder.Entity("ELearning.Domain.Discounts.CodeAreas", b =>
@@ -1634,13 +1748,6 @@ namespace ELearning.Infastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("fk_instructors_users_id");
-
-                    b.HasOne("ELearning.Domain.Subjects.Subject", null)
-                        .WithMany()
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("fk_instructors_subjects_subject_id");
 
                     b.OwnsOne("ELearning.Domain.Ratings.RatingSummary", "Rating", b1 =>
                         {
@@ -1904,6 +2011,11 @@ namespace ELearning.Infastructure.Migrations
 
             modelBuilder.Entity("ELearning.Domain.Students.Student", b =>
                 {
+                    b.HasOne("ELearning.Domain.Classes.LearningClass", null)
+                        .WithMany()
+                        .HasForeignKey("ClassId")
+                        .HasConstraintName("fk_students_learning_class_class_id");
+
                     b.HasOne("ELearning.Domain.Users.User", null)
                         .WithOne()
                         .HasForeignKey("ELearning.Domain.Students.Student", "Id")

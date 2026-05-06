@@ -27,10 +27,10 @@ public class SubjectsController(ISender sender, LinkService linkService) : Contr
     /// <param name="id">Subject Unique Identifier</param>
     /// <param name="accept">Accepted media type for content negotiation</param>
     /// <returns>Subject model contains subject details with all instructors related to that subject</returns>
-    [ProducesResponseType<SubjectWithInstructorsDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<SubjectResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<SubjectWithInstructorsDto>> Get(string id, [FromHeader(Name = "Accept")] string accept)
+    public async Task<ActionResult<SubjectResponse>> Get(string id, [FromHeader(Name = "Accept")] string accept)
     {
         var query = new GetSubjectQuery(id);
         var result = await _sender.Send(query);

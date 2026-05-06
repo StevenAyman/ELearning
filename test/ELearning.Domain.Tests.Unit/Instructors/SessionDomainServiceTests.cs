@@ -28,10 +28,10 @@ public sealed class SessionDomainServiceTests
         var createdOnUtc = DateTime.UtcNow;
         var instructorId = $"I_{Guid.CreateVersion7()}";
         var sessionId = $"s_{Guid.CreateVersion7()}";
-        var session = new Session(id, title, description, price, SessionStatus.Draft, createdOnUtc, instructorId, sessionId);
+        var session = new Session(id, title, description, price, SessionStatus.Draft, createdOnUtc, instructorId, sessionId, "");
 
         // Act
-        var result = _sut.CreateSession(id, title, description, price, createdOnUtc, instructorId, sessionId);
+        var result = _sut.CreateSession(id, title, description, price, createdOnUtc, instructorId, sessionId, "");
 
         // Assert
         result.Should().NotBeNull();

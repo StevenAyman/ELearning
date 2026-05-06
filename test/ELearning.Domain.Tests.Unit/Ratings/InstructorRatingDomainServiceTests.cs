@@ -76,7 +76,7 @@ public sealed class InstructorRatingDomainServiceTests
         // Arrange
         var token = TestContext.Current.CancellationToken;
         string instructorId = "1", studentId = "2";
-        var session = new Session("1", new Title(""), new Description(""), Money.Zero(), SessionStatus.Publish, DateTime.UtcNow, "10", "2");
+        var session = new Session("1", new Title(""), new Description(""), Money.Zero(), SessionStatus.Publish, DateTime.UtcNow, "10", "2", "");
         _instructorRatingRepo.GetWithSpecAsync(Arg.Any<BaseSpecifications<InstructorsRating>>(), token)
             .ReturnsNull();
         _purchaseRepo.GetAllWithSpecAsync(Arg.Any<BaseSpecifications<Purchase>>(), token)
@@ -104,7 +104,7 @@ public sealed class InstructorRatingDomainServiceTests
         var token = TestContext.Current.CancellationToken;
         string instructorId = "1", studentId = "2";
         var utc = DateTime.UtcNow;
-        var session = new Session("1", new Title(""), new Description(""), Money.Zero(), SessionStatus.Publish, utc, "1", "2");
+        var session = new Session("1", new Title(""), new Description(""), Money.Zero(), SessionStatus.Publish, utc, "1", "2", "");
         _instructorRatingRepo.GetWithSpecAsync(Arg.Any<BaseSpecifications<InstructorsRating>>(), token)
             .ReturnsNull();
         _purchaseRepo.GetAllWithSpecAsync(Arg.Any<BaseSpecifications<Purchase>>(), token)
@@ -134,7 +134,7 @@ public sealed class InstructorRatingDomainServiceTests
         string instructorId = "1", studentId = "2";
         var rating = Rating.CreateRating(5);
         var utc = DateTime.UtcNow;
-        var session = new Session("1", new Title(""), new Description(""), Money.Zero(), SessionStatus.Publish, utc, "1", "2");
+        var session = new Session("1", new Title(""), new Description(""), Money.Zero(), SessionStatus.Publish, utc, "1", "2", "");
         _instructorRatingRepo.GetWithSpecAsync(Arg.Any<BaseSpecifications<InstructorsRating>>(), token)
             .ReturnsNull();
         _purchaseRepo.GetAllWithSpecAsync(Arg.Any<BaseSpecifications<Purchase>>(), token)

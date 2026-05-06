@@ -16,7 +16,7 @@ internal sealed class GetAllInstructorsQueryHandler(
 
     public async Task<Result<IEnumerable<InstructorDto>>> Handle(GetAllInstructorsQuery request, CancellationToken cancellationToken)
     {
-        var instructors = await _instructorReadService.GetAllAsync(cancellationToken);
+        var instructors = await _instructorReadService.GetAllAsync(request.ClassId, request.SubjectId, cancellationToken);
 
         if (instructors is null)
         {

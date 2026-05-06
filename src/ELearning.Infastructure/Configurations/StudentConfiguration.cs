@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ELearning.Domain.Classes;
 using ELearning.Domain.Shared;
 using ELearning.Domain.Students;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,12 @@ public sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
         builder.Property<byte[]>("row_version")
             .IsRowVersion();
 
+        // Relationships
+        builder.HasOne<LearningClass>()
+            .WithMany()
+            .HasForeignKey(s => s.ClassId)
+            .IsRequired(false);
 
+        builder.HasIndex(s => s.ClassId);
     }
 }

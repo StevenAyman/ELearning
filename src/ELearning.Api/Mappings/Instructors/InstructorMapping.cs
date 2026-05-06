@@ -12,6 +12,6 @@ public static class InstructorMapping
         var lastName = new LastName(dto.LastName);
         var email = new Email(dto.Email);
 
-        return new CreateInstructorCommand(firstName, lastName, email, dto.BirthDate, dto.City, id, dto.SubjectId);
+        return new CreateInstructorCommand(firstName, lastName, email, dto.BirthDate, dto.City, id);
     }
 }

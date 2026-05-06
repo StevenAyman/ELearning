@@ -23,7 +23,8 @@ public sealed class Session : BaseEntity
         SessionStatus status,
         DateTime createdOnUtc,
         string instructorId,
-        string subjectId) : base(id)
+        string subjectId,
+        string classId) : base(id)
     {
         Title = title;
         Description = description;
@@ -32,6 +33,7 @@ public sealed class Session : BaseEntity
         CreatedOnUtc = createdOnUtc;
         InstructorId = instructorId;
         SubjectId = subjectId;
+        ClassId = classId;
     }
 
     public Title Title { get; private set; }
@@ -39,6 +41,7 @@ public sealed class Session : BaseEntity
     public Money Price { get; private set; }
     public string InstructorId { get; private set; }
     public string SubjectId { get; private set; }
+    public string ClassId { get; private set; }
     public SessionStatus Status { get; private set; }
     public RatingSummary Rating { get; private set; } = new RatingSummary(0, 0);
     public DateTime CreatedOnUtc { get; private set; }

@@ -3,10 +3,14 @@ using ELearning.Api.DTOs.Instructors;
 using ELearning.Api.DTOs.Shared;
 using ELearning.Api.Services;
 using ELearning.Application.Abstractions.Data;
+using ELearning.Application.Instructors.AssignToSubject;
 using ELearning.Application.Instructors.DTOs;
 using ELearning.Application.Instructors.GetAllInstructors;
 using ELearning.Application.Instructors.GetInstructor;
+using ELearning.Application.Instructors.GetInstructorWithSubjects;
+using ELearning.Application.Instructors.RemoveAssignedInstructor;
 using ELearning.Application.Instructors.UpdateInstructor;
+using ELearning.Domain.Shared;
 using ELearning.Domain.Users;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -83,9 +87,9 @@ public class InstructorsController(ISender sender, LinkService linkService) : Co
     [ProducesResponseType<AllDataDto<InstructorDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpGet]
-    public async Task<ActionResult<AllDataDto<InstructorDto>>> GetAllInstructors([FromHeader(Name = "Accept")] string accept)
+    public async Task<ActionResult<AllDataDto<InstructorDto>>> GetAllInstructors(string? classId, string? subjectId, [FromHeader(Name = "Accept")] string accept)
     {
-        var query = new GetAllInstructorsQuery();
+        var query = new GetAllInstructorsQuery(classId, subjectId);
         var instructors = await _sender.Send(query);
 
         if (instructors.IsFailure)
@@ -113,6 +117,63 @@ public class InstructorsController(ISender sender, LinkService linkService) : Co
         };
 
         return Ok(response);
+    }
+
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [HttpPost("{id}/assignments")]
+    public async Task<IActionResult> AssignSubjectToInstructor(string id, ClassSubjectDto classSubjectDto)
+    {
+        var command = new AssignToSubjectCommand(id, classSubjectDto.ClassId, classSubjectDto.SubjectId);
+        var result = await _sender.Send(command);
+        if (result.IsFailure)
+        {
+            var problem = Problem(
+                detail: result.Error?.Message,
+                title: result.Error?.Code,
+                statusCode: result.Error == UserErrors.UserNotExist? StatusCodes.Status404NotFound : StatusCodes.Status400BadRequest);
+            return problem;
+        }
+
+        return NoContent();
+    }
+
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [HttpDelete("{id}/assignments")]
+    public async Task<IActionResult> RemoveAssignedSubject(string id, ClassSubjectDto classSubjectDto)
+    {
+        var command = new RemoveAssignedInstructorCommand(id, classSubjectDto.ClassId, classSubjectDto.SubjectId);
+        var result = await _sender.Send(command);
+
+        if (result.IsFailure)
+        {
+            return Problem(
+                detail: result.Error?.Message,
+                title: result.Error?.Code,
+                statusCode: StatusCodes.Status400BadRequest);
+        }
+
+        return NoContent();
+    }
+
+    [ProducesResponseType<InstructorSubjectsDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [HttpGet("{id}/assignments")]
+    public async Task<ActionResult<InstructorSubjectsDto>> GetInstructorWithSubjects(string id)
+    {
+        var query = new GetInstructorWithSubjectsQuery(id);
+        var result = await _sender.Send(query);
+        if (result.IsFailure)
+        {
+            return Problem(
+                detail: result.Error?.Message,
+                title: result.Error?.Code,
+                statusCode: StatusCodes.Status404NotFound);
+        }
+
+        return result.Value;
     }
 
     private LinkDto[] GetLinks(string id)
