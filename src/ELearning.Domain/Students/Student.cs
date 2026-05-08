@@ -19,4 +19,24 @@ public sealed class Student : BaseEntity
 
     public Money Wallet { get; private set; }
     public string? ClassId { get; private set; }
+
+    public void UpdateClassId(string classId)
+    {
+        ClassId = classId;
+    }
+
+    public void Withdraw(Money amountToPay)
+    {
+        if (Wallet - amountToPay < Money.Zero())
+        {
+            throw new ApplicationException("There's not sufficient amount of money in wallet");
+        }
+
+        Wallet -= amountToPay;
+    }
+
+    public void Deposite(Money amountToDeposite)
+    {
+        Wallet += amountToDeposite;
+    }
 }

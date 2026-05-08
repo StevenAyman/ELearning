@@ -1,7 +1,11 @@
 ﻿using ELearning.Api.BackgroundJobs;
 using ELearning.Api.Exceptions;
 using ELearning.Api.Helpers;
+using ELearning.Api.Mappings.Students;
 using ELearning.Api.Services;
+using ELearning.Api.Services.Sorting;
+using ELearning.Application.Students.DTOs;
+using ELearning.Domain.Students;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.BearerToken;
@@ -43,6 +47,8 @@ public static class DependencyInjection
         AddSwagger(app);
 
         AddBackgroundJobsServices(app);
+
+        AddSortMappings(app);
 
 
         return app;
@@ -227,5 +233,12 @@ public static class DependencyInjection
     {
         app.Services.AddScoped<KeycloakRegisterUserJob>();
         app.Services.AddScoped<KeycloakUpdateUserEmailJob>();
+    }
+
+    public static void AddSortMappings(WebApplicationBuilder app)
+    {
+        app.Services.AddSingleton<ISortMappingDefinition, SortMappingDefinition<StudentDto, Student>>(_ => StudentMapping.SortMappings);
+
+        app.Services.AddTransient<SortMappingProvider>();
     }
 }
