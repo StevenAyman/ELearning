@@ -119,6 +119,12 @@ public class InstructorsController(ISender sender, LinkService linkService) : Co
         return Ok(response);
     }
 
+    /// <summary>
+    /// Assign subject in specific class to specific instructor using instructor id, subject id, class id
+    /// </summary>
+    /// <param name="id">instructorId</param>
+    /// <param name="classSubjectDto">Object that contains class and subject id to be assigned</param>
+    /// <returns></returns>
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -139,6 +145,12 @@ public class InstructorsController(ISender sender, LinkService linkService) : Co
         return NoContent();
     }
 
+    /// <summary>
+    /// Removes assigned subject in specific class from specific instructor by instructor id, class id, subject id
+    /// </summary>
+    /// <param name="id">Instructor unique identifier</param>
+    /// <param name="classSubjectDto">Object contains class and subject id to be removed</param>
+    /// <returns></returns>
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpDelete("{id}/assignments")]
@@ -158,6 +170,11 @@ public class InstructorsController(ISender sender, LinkService linkService) : Co
         return NoContent();
     }
 
+    /// <summary>
+    /// Gets all assigned subjects in class related to specific instructor using instructorId
+    /// </summary>
+    /// <param name="id">Instructor unique identifier</param>
+    /// <returns>Object represents instructor with all subjects (s)he teaches</returns>
     [ProducesResponseType<InstructorSubjectsDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id}/assignments")]
