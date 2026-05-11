@@ -37,7 +37,8 @@ public sealed class PaidCodeConfiguration : IEntityTypeConfiguration<PaidCode>
                 v => Enum.Parse<PaidCodeStatus>(v)
             );
 
-        builder.Property<uint>("row_version")
+        builder.Property<byte[]>("row_version")
+            .IsRequired()
             .IsRowVersion();
 
         // Relationships // student may be use multiple code but code is used by only one student

@@ -18,6 +18,7 @@ public sealed class PaidCode : BaseEntity
         Balance = balance;
         GeneratedAtUtc = generatedAtUtc;
         Code = code;
+        Status = PaidCodeStatus.Available;
     }
     public string Code { get; private set; }
     public Money Balance { get; private set; }

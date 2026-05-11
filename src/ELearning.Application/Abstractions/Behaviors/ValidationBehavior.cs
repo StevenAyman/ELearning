@@ -9,12 +9,12 @@ using FluentValidation;
 using MediatR;
 
 namespace ELearning.Application.Abstractions.Behaviors;
-internal sealed class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<IRequest>> validators)
+internal sealed class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IBaseRequest
     where TResponse : Result
 {
-    private readonly IEnumerable<IValidator<IRequest>> _validators = validators;
+    private readonly IEnumerable<IValidator<TRequest>> _validators = validators;
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
 

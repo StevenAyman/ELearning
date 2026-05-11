@@ -1,0 +1,11 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ELearning.Application.Abstractions.Messaging;
+using ELearning.Application.PaidCodes.DTOs;
+using ELearning.Domain.Purchases;
+
+namespace ELearning.Application.PaidCodes.GetPaidCode;
+public sealed record GetPaidCodeQuery(string Id) : IQuery<FullPaidCodeResponse>;

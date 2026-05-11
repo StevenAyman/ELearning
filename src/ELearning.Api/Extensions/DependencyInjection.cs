@@ -1,9 +1,12 @@
-﻿using ELearning.Api.BackgroundJobs;
+﻿using System.Security.Claims;
+using System.Threading.RateLimiting;
+using ELearning.Api.BackgroundJobs;
 using ELearning.Api.Exceptions;
 using ELearning.Api.Helpers;
 using ELearning.Api.Mappings.Students;
 using ELearning.Api.Services;
 using ELearning.Api.Services.Sorting;
+using ELearning.Application;
 using ELearning.Application.Students.DTOs;
 using ELearning.Domain.Students;
 using FluentValidation;
@@ -28,7 +31,7 @@ public static class DependencyInjection
     public static WebApplicationBuilder AddPresentation(this WebApplicationBuilder app)
     {
 
-        app.Services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection));
+        app.Services.AddValidatorsFromAssemblyContaining<Program>();
 
         app.Services.AddTransient<LinkService>();
 
@@ -49,6 +52,8 @@ public static class DependencyInjection
         AddBackgroundJobsServices(app);
 
         AddSortMappings(app);
+
+        AddRateLimiting(app);
 
 
         return app;
@@ -240,5 +245,40 @@ public static class DependencyInjection
         app.Services.AddSingleton<ISortMappingDefinition, SortMappingDefinition<StudentDto, Student>>(_ => StudentMapping.SortMappings);
 
         app.Services.AddTransient<SortMappingProvider>();
+    }
+
+    public static void AddRateLimiting(WebApplicationBuilder app)
+    {
+        app.Services.AddRateLimiter(options =>
+        {
+            options.AddPolicy("redeem-code", context =>
+            {
+                var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                             context.Connection.RemoteIpAddress?.ToString() ?? "anonymous";
+
+                return RateLimitPartition.GetFixedWindowLimiter(userId, _ =>
+                 new FixedWindowRateLimiterOptions
+                 {
+                     PermitLimit = 5,
+                     QueueLimit = 0,
+                     Window = TimeSpan.FromDays(1)
+                 });
+            });
+
+            options.OnRejected = async (context, ct) =>
+            {
+                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                context.HttpContext.Response.ContentType = "application/problem+json";
+
+                var problemDetails = new ProblemDetails
+                {
+                    Title = "Too Many Request",
+                    Detail = "You have exceeded the maximum number of attempts. Please try again later",
+                    Status = StatusCodes.Status429TooManyRequests,
+                };
+
+                await context.HttpContext.Response.WriteAsJsonAsync(problemDetails, ct);
+            };
+        });
     }
 }
