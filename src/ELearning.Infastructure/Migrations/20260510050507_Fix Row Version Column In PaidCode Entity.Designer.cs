@@ -4,6 +4,7 @@ using ELearning.Infastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ELearning.Infastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260510050507_Fix Row Version Column In PaidCode Entity")]
+    partial class FixRowVersionColumnInPaidCodeEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1576,7 +1579,7 @@ namespace ELearning.Infastructure.Migrations
 
                             b1.HasKey("DiscountCodeId");
 
-                            b1.ToTable("discount_codes", (string)null);
+                            b1.ToTable("discount_codes");
 
                             b1.WithOwner()
                                 .HasForeignKey("DiscountCodeId")
@@ -1766,7 +1769,7 @@ namespace ELearning.Infastructure.Migrations
 
                             b1.HasKey("InstructorId");
 
-                            b1.ToTable("instructors", (string)null);
+                            b1.ToTable("instructors");
 
                             b1.WithOwner()
                                 .HasForeignKey("InstructorId")
@@ -1935,7 +1938,7 @@ namespace ELearning.Infastructure.Migrations
 
                             b1.HasKey("SessionId");
 
-                            b1.ToTable("sessions", (string)null);
+                            b1.ToTable("sessions");
 
                             b1.WithOwner()
                                 .HasForeignKey("SessionId")

@@ -51,6 +51,8 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
     Authorization = [new HangfireAuthorizationFilter()]
 });
 
+app.UseRateLimiter();
+
 app.MapControllers();
 
 await app.RunAsync();

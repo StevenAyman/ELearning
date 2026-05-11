@@ -132,6 +132,7 @@ public static class DependencyInjection
         services.AddScoped<IAssistantReadService, AssistantReadService>();
         services.AddScoped<IClassReadService,  ClassReadService>();
         services.AddScoped<IStudentReadService, StudentReadService>();
+        services.AddScoped<IPaidCodeReadService, PaidCodeReadService>();
         // Read Services End
     }
 
