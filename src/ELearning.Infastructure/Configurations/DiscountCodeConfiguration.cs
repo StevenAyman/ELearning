@@ -36,6 +36,12 @@ public sealed class DiscountCodeConfiguration : IEntityTypeConfiguration<Discoun
                 type => Enum.Parse<DiscountExpirationType>(type)
             );
 
+        builder.Property(dc => dc.Status)
+            .HasConversion(
+                status => status.ToString(),
+                status => Enum.Parse<DiscountStatus>(status)
+            );
+
         builder.Property(dc => dc.DiscountAmount)
             .HasColumnType("decimal(18,2)")
             .HasConversion(value => value.Amount, value => new Money(value));

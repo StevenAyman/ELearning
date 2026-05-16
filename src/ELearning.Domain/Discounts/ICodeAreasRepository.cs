@@ -9,7 +9,10 @@ namespace ELearning.Domain.Discounts;
 public interface ICodeAreasRepository
 {
     Task<CodeAreas?> GetWithSpecAsync(IBaseSpecifications<CodeAreas> spec,  CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<CodeAreas>> GetAllWithSpecAsync(IBaseSpecifications<CodeAreas> spec, CancellationToken cancellationToken = default);
     void Add(CodeAreas codeAreas);
+    void AddRange(List<CodeAreas> codeAreas);
+    void RemoveRange(List<CodeAreas> codeAreas);
     void Update(CodeAreas codeAreas);
     void Delete(CodeAreas codeAreas);   
 }

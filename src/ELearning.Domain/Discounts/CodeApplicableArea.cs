@@ -12,4 +12,9 @@ public sealed class CodeApplicableArea
     }
     public int Id { get; private set; }
     public TypeName Type { get; private set; }
+
+    public void Update(TypeName type)
+    {
+        Type = type;
+    }
 }

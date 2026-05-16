@@ -37,6 +37,7 @@ public sealed class DiscountCode : BaseEntity
     public Money DiscountAmount {  get; private set; }
     public int? CountLimit { get; private set; }
     public int CurrentCount { get; private set; }
+    public DiscountStatus Status { get; private set; }
     public DateRange? ExpirePeriod { get; private set; }
     public DateTime GeneratedAtUtc { get; private set; }
     public DateTime? ExpiredAtUtc { get; private set; }
@@ -143,7 +144,9 @@ public sealed class DiscountCode : BaseEntity
 
         public DiscountCode Build(DateTime utcNow)
         {
-            return new DiscountCode(_id, _code, _discountAmount, _discountAmountType, _expireType, utcNow, _expirePeriod, _countLimit);
+            var discount = new DiscountCode(_id, _code, _discountAmount, _discountAmountType, _expireType, utcNow, _expirePeriod, _countLimit);
+            discount.Status = DiscountStatus.Active;
+            return discount;
         }
     }
 
@@ -155,6 +158,7 @@ public sealed class DiscountCode : BaseEntity
         }
 
         ExpiredAtUtc = utcNow;
+        Status = DiscountStatus.Expired;
         return Result.Success();
 
     }
@@ -204,7 +208,7 @@ public sealed class DiscountCode : BaseEntity
         return Result.Success();
     }
 
-    public Result UpdateCountLimit(int countLimit)
+    public Result UpdateCountLimit(int? countLimit)
     {
         if (ExpiredAtUtc.HasValue)
         {
@@ -222,7 +226,7 @@ public sealed class DiscountCode : BaseEntity
             return Result.Failure(DiscountErrors.InvalidLimitCount);
         }
 
-        CountLimit = countLimit;
+        CountLimit = countLimit.HasValue ? countLimit.Value : null;
         return Result.Success();
     }
 
@@ -260,6 +264,30 @@ public sealed class DiscountCode : BaseEntity
         }
 
         ExpirePeriod = newExpirePeriod;
+        return Result.Success();
+    }
+
+    public Result UpdateDiscountType(DiscountAmountType discountAmountType)
+    {
+        if (ExpiredAtUtc.HasValue)
+        {
+            return Result.Failure(DiscountErrors.ExpiredCode);
+        }
+
+        DiscountType = discountAmountType;
+
+        return Result.Success();
+    }
+
+    public Result UpdateExpireType(DiscountExpirationType discountExpirationType)
+    {
+        if (ExpiredAtUtc.HasValue)
+        {
+            return Result.Failure(DiscountErrors.ExpiredCode);
+        }
+
+        ExpireType = discountExpirationType;
+
         return Result.Success();
     }
 

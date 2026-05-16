@@ -14,6 +14,7 @@ public interface IUserRepository<TEntity> where TEntity : BaseEntity
     Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<(TEntity entity, User user)?> GetUserWithProfileAsync(string id, CancellationToken cancellationToken = default);
     Task<TEntity?> GetWithSpecAsync(IBaseSpecifications<TEntity> specs, CancellationToken cancellationToken = default);
+    bool IsIdsExist(string[] ids);
     void Add(TEntity entity);
     void Update(TEntity entity);
     void Delete(TEntity entity);

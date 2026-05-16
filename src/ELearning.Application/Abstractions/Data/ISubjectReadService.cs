@@ -8,6 +8,6 @@ using ELearning.Application.Subjects.GetSubject;
 namespace ELearning.Application.Abstractions.Data;
 public interface ISubjectReadService
 {
-    Task<SubjectDto?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
     Task<IEnumerable<SubjectDto>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<SubjectDto?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
 }

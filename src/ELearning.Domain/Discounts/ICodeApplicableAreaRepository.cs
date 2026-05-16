@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ELearning.Domain.Discounts;
 public interface ICodeApplicableAreaRepository
 {
-    Task<CodeApplicableArea?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+    Task<CodeApplicableArea?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<CodeApplicableArea>> GetAllAsync(CancellationToken cancellationToken = default);
     void Add(CodeApplicableArea codeApplicableArea);
     void Update(CodeApplicableArea codeApplicableArea);
