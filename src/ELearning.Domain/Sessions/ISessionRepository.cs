@@ -13,6 +13,7 @@ public interface ISessionRepository
     Task<Session?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
     Task<Session?> GetWithSpecAsync(IBaseSpecifications<Session> specs, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Session>> GetAllWithSpecAsync(IBaseSpecifications<Session> specs, CancellationToken cancellationToken = default);
+    bool IsIdsExist(string[] ids);
 
     void Update(Session session);
     void Delete(Session session);

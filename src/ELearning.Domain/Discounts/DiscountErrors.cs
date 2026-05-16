@@ -12,6 +12,10 @@ public static class DiscountErrors
         "DiscountCode.Invalid",
         "Discount code shouldn't be null or empty");
 
+    public static readonly Error Overlap = new Error(
+        "DiscountCode.Overlap",
+        "This code is already exist before");
+
     public static readonly Error InvalidExpirationCriteria = new(
         "DiscountCode.ExpirationCriteria",
         "Error. Expiration policy doesn't meet the expiration type.");
@@ -39,5 +43,17 @@ public static class DiscountErrors
     public static readonly Error InvalidPercentageAmount = new(
         "DiscountCode.InvalidPercentageAmount",
         "Invalid discount amount should be between 1% and 100%");
+
+    public static readonly Error AreaNotFound = new(
+        "DiscountArea.NotFound",
+        "Invalid discount area.");
+
+    public static readonly Error AreaExists = new(
+        "Area.Found",
+        "Area with this name is already exist");
+
+    public static readonly Error InvalidTarget = new(
+        "DiscountArea.InvalidTarget",
+        "Targets are invalid for this area type.");
 
 }

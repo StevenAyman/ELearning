@@ -13,4 +13,14 @@ public sealed class SessionRepository : Repository<Session>, ISessionRepository
     {
         
     }
+
+    public bool IsIdsExist(string[] ids)
+    {
+        var uniqueIds = ids.Distinct();
+        var count = _dbContext.Set<Session>()
+            .Where(s => uniqueIds.Contains(s.Id))
+            .Count();
+
+        return count == uniqueIds.Count();
+    }
 }

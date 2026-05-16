@@ -9,8 +9,8 @@
 
 public static class DiscountApplicableAreas
 {
-    public static readonly string General = "General";
-    public static readonly string Subject = "Subject";
-    public static readonly string Instructor = "Instructor";
-    public static readonly string Session = "Session";
+    public static readonly string General = "general";
+    public static readonly string Subject = "subject";
+    public static readonly string Instructor = "instructor";
+    public static readonly string Session = "session";
 }

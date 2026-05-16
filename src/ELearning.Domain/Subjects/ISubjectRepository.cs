@@ -11,6 +11,7 @@ public interface ISubjectRepository
     Task<IReadOnlyList<Subject>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<Subject?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
     Task<Subject?> GetWithSpecAsync(IBaseSpecifications<Subject> spec, CancellationToken cancellationToken = default);
+    bool IsIdsExist(string[] ids);
     void Update(Subject subject);
     void Delete(Subject subject);
     void Add(Subject subject);

@@ -218,6 +218,11 @@ namespace ELearning.Infastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("last_used_at_utc");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("status");
+
                     b.Property<byte[]>("row_version")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -1576,7 +1581,7 @@ namespace ELearning.Infastructure.Migrations
 
                             b1.HasKey("DiscountCodeId");
 
-                            b1.ToTable("discount_codes", (string)null);
+                            b1.ToTable("discount_codes");
 
                             b1.WithOwner()
                                 .HasForeignKey("DiscountCodeId")
@@ -1766,7 +1771,7 @@ namespace ELearning.Infastructure.Migrations
 
                             b1.HasKey("InstructorId");
 
-                            b1.ToTable("instructors", (string)null);
+                            b1.ToTable("instructors");
 
                             b1.WithOwner()
                                 .HasForeignKey("InstructorId")
@@ -1935,7 +1940,7 @@ namespace ELearning.Infastructure.Migrations
 
                             b1.HasKey("SessionId");
 
-                            b1.ToTable("sessions", (string)null);
+                            b1.ToTable("sessions");
 
                             b1.WithOwner()
                                 .HasForeignKey("SessionId")

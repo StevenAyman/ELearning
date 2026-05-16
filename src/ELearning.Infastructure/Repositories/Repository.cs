@@ -17,6 +17,9 @@ public class Repository<T>(AppDbContext dbContext) where T : class
     public virtual async Task<T?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
          => await _dbContext.Set<T>().FindAsync([id], cancellationToken);
 
+    public virtual async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+      => await _dbContext.Set<T>().FindAsync([id], cancellationToken);
+
     public virtual async Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default)
         => await _dbContext.Set<T>().ToListAsync(cancellationToken);
     public async Task<T?> GetWithSpecAsync(

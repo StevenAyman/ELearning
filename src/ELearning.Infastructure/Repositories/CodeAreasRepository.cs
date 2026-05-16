@@ -11,4 +11,14 @@ public sealed class CodeAreasRepository : Repository<CodeAreas>, ICodeAreasRepos
     public CodeAreasRepository(AppDbContext dbContext) : base(dbContext)
     {
     }
+
+    public void AddRange(List<CodeAreas> codeAreas)
+    {
+        _dbContext.Set<CodeAreas>().AddRange(codeAreas);
+    }
+
+    public void RemoveRange(List<CodeAreas> codeAreas)
+    {
+        _dbContext.Set<CodeAreas>().RemoveRange(codeAreas);
+    }
 }
